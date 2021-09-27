@@ -1,6 +1,12 @@
 # Obsidian Vale
 
-A Vale plugin for Obsidian.
+A [Vale](https://docs.errata.ai/) client for Obsidian.
+
+![Screenshot](screenshot.png)
+
+## Prequisites
+
+- [Vale Server](https://docs.errata.ai/vale-server/install/)
 
 ## Configure
 
