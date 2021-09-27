@@ -1,0 +1,67 @@
+.alert {
+  padding: 10px;
+  border: 1px solid var(--background-modifier-border);
+  background-color: var(--background-primary);
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: 0.2s all;
+}
+
+.alert:hover {
+  border: 1px solid var(--interactive-accent);
+  transition: 0.2s all;
+}
+
+.alert__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.alert__header a {
+  color: var(--text-muted);
+}
+.alert__header a:hover {
+  color: var(--text-normal);
+}
+
+.alert__severity {
+  background-color: var(--background-modifier-error);
+  border-radius: 3px;
+  padding: 2px 3px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--text-on-accent);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.alert__check {
+  background-color: var(--background-secondary);
+  border-radius: 3px;
+  padding: 2px 3px;
+  line-height: 1;
+  font-size: 11px;
+  color: var(--text-muted);
+  border: 1px solid var(--background-modifier-border);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.alert__match {
+  font-size: 16px;
+  color: var(--text-accent);
+  padding: 5px 0;
+  white-space: wrap;
+  overflow: hidden;
+}
+
+.alert__body {
+  font-size: 13px;
+  white-space: wrap;
+  overflow: hidden;
+}
