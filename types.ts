@@ -1,4 +1,12 @@
-export interface ValeOutput {
+export interface ValeSettings {
+  url: string;
+}
+
+export const DEFAULT_SETTINGS: ValeSettings = {
+  url: "http://localhost:7777",
+};
+
+export interface ValeResponse {
   [key: string]: ValeAlert[];
 }
 export interface ValeAlert {

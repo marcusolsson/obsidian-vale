@@ -1,10 +1,10 @@
 {
-  "id": "obsidian-vale-react",
-  "name": "Vale React",
-  "version": "1.0.1",
+  "id": "obsidian-vale",
+  "name": "Vale",
+  "version": "1.0.0",
   "minAppVersion": "0.9.12",
-  "description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-  "author": "Obsidian",
-  "authorUrl": "https://obsidian.md/about",
+  "description": "A Vale client for Obsidian.",
+  "author": "Marcus Olsson",
+  "authorUrl": "https://marcus.se.net",
   "isDesktopOnly": false
 }

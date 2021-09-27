@@ -1,29 +1,31 @@
-import { valeCheckEditorCallback } from "command";
 import { Plugin } from "obsidian";
-import { ValeOutput } from "types";
+import { ValeSettingTab } from "settings";
+import { DEFAULT_SETTINGS, ValeResponse, ValeSettings } from "types";
 import { ValeResultsView, VIEW_TYPE_VALE } from "./view";
 
-export default class ExamplePlugin extends Plugin {
+export default class ValePlugin extends Plugin {
+  settings: ValeSettings;
   view: ValeResultsView;
-  results: ValeOutput;
+
+  results: ValeResponse;
 
   async onload() {
-    this.registerView(
-      VIEW_TYPE_VALE,
-      (leaf) => (this.view = new ValeResultsView(leaf, this.results))
-    );
+    this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
+
+    this.addSettingTab(new ValeSettingTab(this.app, this));
 
     this.addCommand({
       id: "vale-check-document",
-      name: "Check Document",
-      editorCallback: valeCheckEditorCallback(
-        this.app.vault,
-        async (results) => {
-          this.results = results;
-          await this.activateView();
-        }
-      ),
+      name: "Check document",
+      callback: () => {
+        this.activateView();
+      },
     });
+
+    this.registerView(
+      VIEW_TYPE_VALE,
+      (leaf) => (this.view = new ValeResultsView(leaf, this.settings))
+    );
   }
 
   async onunload() {

@@ -1,18 +1,18 @@
-import { AppContext } from "app";
+import { AppContext, SettingsContext } from "context";
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { ValeOutput } from "types";
-import { AlertList } from "./components/AlertList";
+import { ValeSettings } from "types";
+import { ValeCheck } from "./components/ValeCheck";
 
-export const VIEW_TYPE_VALE = "vale-alerts";
+export const VIEW_TYPE_VALE = "vale";
 
 export class ValeResultsView extends ItemView {
-  results: ValeOutput;
+  settings: ValeSettings;
 
-  constructor(leaf: WorkspaceLeaf, results: ValeOutput) {
+  constructor(leaf: WorkspaceLeaf, settings: ValeSettings) {
     super(leaf);
-    this.results = results;
+    this.settings = settings;
   }
 
   getViewType() {
@@ -30,7 +30,9 @@ export class ValeResultsView extends ItemView {
   async onOpen() {
     ReactDOM.render(
       <AppContext.Provider value={this.app}>
-        <AlertList alerts={Object.values(this.results)[0]} />
+        <SettingsContext.Provider value={this.settings}>
+          <ValeCheck />
+        </SettingsContext.Provider>
       </AppContext.Provider>,
       this.containerEl.children[1]
     );

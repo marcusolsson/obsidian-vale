@@ -1,4 +1,4 @@
-import { useApp } from "app";
+import { useApp } from "hooks";
 import { MarkdownView } from "obsidian";
 import * as React from "react";
 import { ValeAlert } from "types";
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const AlertList = ({ alerts }: Props) => {
-  const app = useApp();
+  const { workspace } = useApp();
 
   return (
     <>
@@ -19,7 +19,8 @@ export const AlertList = ({ alerts }: Props) => {
             key={key}
             alert={alert}
             onClick={(alert) => {
-              const view = app.workspace.getActiveViewOfType(MarkdownView);
+              const view = workspace.getActiveViewOfType(MarkdownView);
+
               view.editor.focus();
               view.editor.setSelection(
                 {
@@ -31,7 +32,6 @@ export const AlertList = ({ alerts }: Props) => {
                   ch: alert.Span[1],
                 }
               );
-              return null;
             }}
           />
         );

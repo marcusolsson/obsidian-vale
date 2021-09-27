@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Icon } from "./Icon";
 import { ValeAlert } from "../types";
+import { Icon } from "./Icon";
 
 interface Props {
   alert: ValeAlert;
@@ -12,6 +12,7 @@ export const Alert = ({ alert, onClick }: Props) => {
     <div
       className="card alert"
       onClick={(e) => {
+        // Ignore click when clicking the link.
         if ((e.target as any).nodeName === "DIV") {
           onClick(alert);
         }
@@ -20,10 +21,14 @@ export const Alert = ({ alert, onClick }: Props) => {
       <div className="alert__header">
         <div className="alert__severity">{alert.Severity}</div>
         <div className="alert__check">{alert.Check}</div>
-        <div style={{ flexGrow: 1 }} />
-        <a href={alert.Link}>
-          <Icon name="info" />
-        </a>
+        {alert.Link && (
+          <>
+            <div style={{ flexGrow: 1 }} />
+            <a href={alert.Link}>
+              <Icon name="info" />
+            </a>
+          </>
+        )}
       </div>
       <div className="alert__body">{alert.Message}</div>
       <div className="alert__match">{alert.Match}</div>
