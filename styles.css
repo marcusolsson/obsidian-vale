@@ -1,67 +1,144 @@
-.alert {
-  padding: 10px;
-  border: 1px solid var(--background-modifier-border);
-  background-color: var(--background-primary);
+.obsidian-vale {
+  /*
+   * Variables
+   */
+  --vale-alert-border-color: var(--background-modifier-border);
+  --vale-alert-border-color-hover: var(--interactive-accent);
+  --vale-alert-background-color: var(--background-primary);
+
+  /* Link */
+  --vale-alert-link-color: var(--text-muted);
+  --vale-alert-link-color-hover: var(--text-normal);
+
+  /* Severity */
+  --vale-alert-severity-color: var(--text-on-accent);
+  --vale-alert-severity-background-color: var(--background-modifier-error);
+  --vale-alert-severity-border-color: transparent;
+
+  /* Check name */
+  --vale-alert-check-color: var(--text-muted);
+  --vale-alert-check-background-color: var(--background-secondary);
+  --vale-alert-check-border-color: var(--background-modifier-border);
+
+  /* Matched text */
+  --vale-alert-match-color: var(--text-on-accent);
+  --vale-alert-match-background-color: var(--interactive-accent);
+
+  height: 100%;
+}
+
+/*
+   * Classes
+   */
+.obsidian-vale .alert {
   margin-bottom: 5px;
   cursor: pointer;
   transition: 0.2s all;
+  padding: 10px;
+  border-radius: 4px;
+
+  /* Customizable */
+  border: 1px solid var(--vale-alert-border-color);
+  background-color: var(--vale-alert-background-color);
 }
 
-.alert:hover {
-  border: 1px solid var(--interactive-accent);
+.obsidian-vale .alert:hover {
   transition: 0.2s all;
+
+  /* Customizable */
+  border: 1px solid var(--vale-alert-border-color-hover);
 }
 
-.alert__header {
+.obsidian-vale .alert__header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 5px;
 }
 
-.alert__header a {
-  color: var(--text-muted);
-}
-.alert__header a:hover {
-  color: var(--text-normal);
+.obsidian-vale .alert__link {
+  /* Customizable */
+  color: var(--vale-alert-link-color);
 }
 
-.alert__severity {
-  background-color: var(--background-modifier-error);
+.obsidian-vale .alert__link:hover {
+  /* Customizable */
+  color: var(--vale-alert-link-color-hover);
+}
+
+.obsidian-vale .alert__severity {
   border-radius: 3px;
   padding: 2px 3px;
   font-size: 11px;
   line-height: 1;
-  color: var(--text-on-accent);
-  border: 1px solid transparent;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+
+  /* Customizable */
+  background-color: var(--vale-alert-severity-background-color);
+  color: var(--vale-alert-severity-color);
+  border: 1px solid var(--vale-alert-severity-border-color);
 }
 
-.alert__check {
-  background-color: var(--background-secondary);
+.obsidian-vale .alert__check {
   border-radius: 3px;
   padding: 2px 3px;
   line-height: 1;
   font-size: 11px;
-  color: var(--text-muted);
-  border: 1px solid var(--background-modifier-border);
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+
+  /* Customizable */
+  background-color: var(--vale-alert-check-background-color);
+  border: 1px solid var(--vale-alert-check-border-color);
+  color: var(--vale-alert-check-color);
 }
 
-.alert__match {
+.obsidian-vale .alert__match {
   font-size: 16px;
-  color: var(--text-accent);
   padding: 5px 0;
   white-space: wrap;
   overflow: hidden;
+
+  /* Customizable */
+  background-color: var(--vale-alert-match-background-color);
+  color: var(--vale-alert-match-color);
+  border-radius: 3px;
+  display: inline-block;
+  line-height: 1;
+  padding: 4px 4px;
 }
 
-.alert__body {
+.obsidian-vale .alert__message {
   font-size: 13px;
   white-space: wrap;
   overflow: hidden;
+  padding: 4px 0;
+}
+
+.obsidian-vale .error {
+  border-left: 5px solid var(--background-modifier-error);
+  background-color: rgba(var(--background-modifier-error-rgb), 0.38);
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+.obsidian-vale .success {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.obsidian-vale .success-icon {
+  color: var(--background-modifier-success);
+}
+
+.obsidian-vale .success-text {
+  color: var(--background-modifier-success);
+  font-weight: 600;
+  margin-top: 10px;
 }

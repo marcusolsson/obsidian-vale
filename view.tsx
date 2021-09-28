@@ -31,7 +31,9 @@ export class ValeResultsView extends ItemView {
     ReactDOM.render(
       <AppContext.Provider value={this.app}>
         <SettingsContext.Provider value={this.settings}>
-          <ValeCheck />
+          <div className="obsidian-vale">
+            <ValeCheck />
+          </div>
         </SettingsContext.Provider>
       </AppContext.Provider>,
       this.containerEl.children[1]

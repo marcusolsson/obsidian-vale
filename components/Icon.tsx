@@ -4,9 +4,10 @@ import * as React from "react";
 interface Props {
   name: string;
   size?: number;
+  className?: string;
 }
 
-export const Icon = ({ name, size = 16 }: Props) => {
+export const Icon = ({ name, className, size = 16 }: Props) => {
   const ref = React.useRef<HTMLDivElement>();
 
   React.useEffect(() => {
@@ -17,6 +18,7 @@ export const Icon = ({ name, size = 16 }: Props) => {
 
   return (
     <div
+      className={className}
       ref={ref}
       style={{
         width: size,

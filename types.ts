@@ -1,9 +1,23 @@
 export interface ValeSettings {
-  url: string;
+  type: string;
+  server: {
+    url: string;
+  };
+  cli: {
+    valePath: string;
+    configPath: string;
+  };
 }
 
 export const DEFAULT_SETTINGS: ValeSettings = {
-  url: "http://localhost:7777",
+  type: "server",
+  server: {
+    url: "http://localhost:7777",
+  },
+  cli: {
+    valePath: "vale",
+    configPath: "$HOME/.vale.ini",
+  },
 };
 
 export interface ValeResponse {

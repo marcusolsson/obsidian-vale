@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { MarkdownView, Plugin } from "obsidian";
 import { ValeSettingTab } from "settings";
 import { DEFAULT_SETTINGS, ValeResponse, ValeSettings } from "types";
 import { ValeResultsView, VIEW_TYPE_VALE } from "./view";
@@ -17,8 +17,14 @@ export default class ValePlugin extends Plugin {
     this.addCommand({
       id: "vale-check-document",
       name: "Check document",
-      callback: () => {
+      checkCallback: (checking) => {
+        if (checking) {
+          return !!this.app.workspace.getActiveViewOfType(MarkdownView);
+        }
+
         this.activateView();
+
+        return true;
       },
     });
 

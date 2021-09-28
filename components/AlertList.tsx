@@ -13,7 +13,7 @@ export const AlertList = ({ alerts }: Props) => {
 
   return (
     <>
-      {alerts.map((alert, key) => {
+      {alerts?.map((alert, key) => {
         return (
           <Alert
             key={key}
@@ -21,17 +21,19 @@ export const AlertList = ({ alerts }: Props) => {
             onClick={(alert) => {
               const view = workspace.getActiveViewOfType(MarkdownView);
 
-              view.editor.focus();
-              view.editor.setSelection(
-                {
-                  line: alert.Line - 1,
-                  ch: alert.Span[0] - 1,
-                },
-                {
-                  line: alert.Line - 1,
-                  ch: alert.Span[1],
-                }
-              );
+              if (view.getMode() === "source") {
+                view.editor.focus();
+                view.editor.setSelection(
+                  {
+                    line: alert.Line - 1,
+                    ch: alert.Span[0] - 1,
+                  },
+                  {
+                    line: alert.Line - 1,
+                    ch: alert.Span[1],
+                  }
+                );
+              }
             }}
           />
         );

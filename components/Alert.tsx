@@ -10,7 +10,7 @@ interface Props {
 export const Alert = ({ alert, onClick }: Props) => {
   return (
     <div
-      className="card alert"
+      className="alert"
       onClick={(e) => {
         // Ignore click when clicking the link.
         if ((e.target as any).nodeName === "DIV") {
@@ -24,13 +24,13 @@ export const Alert = ({ alert, onClick }: Props) => {
         {alert.Link && (
           <>
             <div style={{ flexGrow: 1 }} />
-            <a href={alert.Link}>
+            <a href={alert.Link} className="alert__link">
               <Icon name="info" />
             </a>
           </>
         )}
       </div>
-      <div className="alert__body">{alert.Message}</div>
+      <div className="alert__message">{alert.Message}</div>
       <div className="alert__match">{alert.Match}</div>
     </div>
   );
