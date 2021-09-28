@@ -6,8 +6,4 @@ A [Vale](https://docs.errata.ai/) client for Obsidian.
 
 ## Prequisites
 
-- [Vale Server](https://docs.errata.ai/vale-server/install/)
-
-## Configure
-
-- **URL:** The address to your Vale Server
+- [Vale Server](https://docs.errata.ai/vale-server/install/) **or** [Vale CLI](https://docs.errata.ai/vale/about)
