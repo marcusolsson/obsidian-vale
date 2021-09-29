@@ -1,6 +1,6 @@
 import { ValeCli, ValeServer } from "api";
-import { stat } from "fs/promises";
 import { useApp, useSettings } from "hooks";
+import { ValeManager } from "manager";
 import { MarkdownView } from "obsidian";
 import * as React from "react";
 import { ValeAlert } from "types";
@@ -9,9 +9,11 @@ import { ErrorMessage } from "./ErrorMessage";
 import { Icon } from "./Icon";
 import { LoaderCube } from "./LoaderCube";
 
-interface Props {}
+interface Props {
+  manager?: ValeManager;
+}
 
-export const ValeCheck = ({}: Props) => {
+export const ValeCheck = ({ manager }: Props) => {
   const [results, setResults] = React.useState<ValeAlert[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [errorMessages, setErrorMessages] = React.useState<React.ReactNode>();
@@ -33,30 +35,9 @@ export const ValeCheck = ({}: Props) => {
     );
   }
 
-  const precheck = async () => {
-    let foundVale = false;
-    let foundConfig = false;
-
-    // Check if vale exists.
-    try {
-      const vale = await stat(cli.valePath);
-      foundVale = vale.isFile();
-    } catch (e) {
-      foundVale = false;
-    }
-
-    // Check if the config file exists.
-    try {
-      const config = await stat(cli.configPath);
-      foundConfig = config.isFile();
-    } catch (e) {
-      foundConfig = false;
-    }
-
-    return { vale: foundVale, config: foundConfig };
-  };
-
   const check = async () => {
+    setErrorMessages(undefined);
+
     switch (type) {
       case "server":
         try {
@@ -83,16 +64,31 @@ export const ValeCheck = ({}: Props) => {
 
         break;
       case "cli":
-        try {
-          const cliResults = await new ValeCli({
-            valePath: cli.valePath,
-            configPath: cli.configPath,
-          }).vale(view.editor.getValue(), "." + view.file.extension);
-          setResults(Object.values(cliResults)[0]);
-        } catch (err) {
-          setErrorMessages(<ErrorMessage message={err.toString()} />);
-        } finally {
+        const valeExists = manager.pathExists();
+        const configExists = manager.configPathExists();
+
+        if (valeExists && configExists) {
+          try {
+            const cliResults = await new ValeCli(manager).vale(
+              view.editor.getValue(),
+              "." + view.file.extension
+            );
+            setResults(Object.values(cliResults)[0]);
+          } catch (err) {
+            setErrorMessages(<ErrorMessage message={err.toString()} />);
+          } finally {
+            setLoading(false);
+          }
+        } else {
           setLoading(false);
+          setErrorMessages(
+            <>
+              {!valeExists && <ErrorMessage message="Couldn't find vale." />}
+              {!configExists && (
+                <ErrorMessage message="Couldn't find config file." />
+              )}
+            </>
+          );
         }
 
         break;
@@ -100,26 +96,7 @@ export const ValeCheck = ({}: Props) => {
   };
 
   React.useEffect(() => {
-    setErrorMessages(undefined);
-
-    precheck()
-      .then((res) => {
-        if (res.vale && res.config) {
-          check();
-        } else {
-          setErrorMessages(
-            <>
-              {!res.vale && <ErrorMessage message="Couldn't find vale." />}
-              {!res.config && (
-                <ErrorMessage message="Couldn't find config file." />
-              )}
-            </>
-          );
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    check();
   }, [type, server, cli, setResults]);
 
   if (loading) {
@@ -145,9 +122,4 @@ export const ValeCheck = ({}: Props) => {
       <div className="success-text">{randomEncouragement()}</div>
     </div>
   );
-};
-
-const randomEncouragement = () => {
-  const phrases = ["Nice! 👌", "You're awesome! 💪", "You did it! 🙌"];
-  return phrases[Math.floor(Math.random() * phrases.length)];
 };

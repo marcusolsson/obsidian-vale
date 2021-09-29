@@ -12,24 +12,12 @@ import { ValeResultsView, VIEW_TYPE_VALE } from "./view";
 export default class ValePlugin extends Plugin {
   settings: ValeSettings;
   view: ValeResultsView;
-  manager: ValeManager;
+  manager?: ValeManager;
 
   results: ValeResponse;
 
   async onload() {
-    this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
-
-    if (path.isAbsolute(this.settings.cli.configPath)) {
-      this.manager = new ValeManager(this.settings.cli.configPath);
-    } else {
-      const { adapter } = this.app.vault;
-
-      if (adapter instanceof FileSystemAdapter) {
-        this.manager = new ValeManager(
-          adapter.getFullPath(this.settings.cli.configPath)
-        );
-      }
-    }
+    await this.loadSettings();
 
     this.addSettingTab(new ValeSettingTab(this.app, this));
 
@@ -50,38 +38,63 @@ export default class ValePlugin extends Plugin {
     this.addCommand({
       id: "vale-uninstall-style",
       name: "Uninstall style",
-      callback: () => {
+      checkCallback: (checking) => {
+        if (checking) {
+          return this.settings.type === "cli";
+        }
+
         new UninstallStyleModal(this.app, this.manager).open();
+
+        return true;
       },
     });
 
     this.addCommand({
       id: "vale-install-style",
       name: "Install style",
-      callback: () => {
+      checkCallback: (checking) => {
+        if (checking) {
+          return this.settings.type === "cli";
+        }
+
         new InstallStyleModal(this.app, this.manager).open();
+
+        return true;
       },
     });
 
     this.addCommand({
       id: "vale-enable-style",
       name: "Enable style",
-      callback: () => {
+      checkCallback: (checking) => {
+        if (checking) {
+          return this.settings.type === "cli";
+        }
+
         new EnableStyleModal(this.app, this.manager).open();
+
+        return true;
       },
     });
 
     this.addCommand({
       id: "vale-disable-style",
       name: "Disable style",
-      callback: () => {
+      checkCallback: (checking) => {
+        if (checking) {
+          return this.settings.type === "cli";
+        }
+
         new DisableStyleModal(this.app, this.manager).open();
+
+        return true;
       },
     });
 
     this.registerView(
       VIEW_TYPE_VALE,
-      (leaf) => (this.view = new ValeResultsView(leaf, this.settings))
+      (leaf) =>
+        (this.view = new ValeResultsView(leaf, this.settings, this.manager))
     );
   }
 
@@ -106,5 +119,37 @@ export default class ValePlugin extends Plugin {
     this.app.workspace.revealLeaf(
       this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE)[0]
     );
+  }
+
+  async saveSettings() {
+    this.saveData(this.settings);
+    this.updateManager();
+  }
+
+  async loadSettings() {
+    this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
+    this.updateManager();
+  }
+
+  updateManager() {
+    this.manager = undefined;
+
+    if (this.settings.type === "cli") {
+      if (path.isAbsolute(this.settings.cli.configPath)) {
+        this.manager = new ValeManager(
+          this.settings.cli.valePath,
+          this.settings.cli.configPath
+        );
+      } else {
+        const { adapter } = this.app.vault;
+
+        if (adapter instanceof FileSystemAdapter) {
+          this.manager = new ValeManager(
+            this.settings.cli.valePath,
+            adapter.getFullPath(this.settings.cli.configPath)
+          );
+        }
+      }
+    }
   }
 }

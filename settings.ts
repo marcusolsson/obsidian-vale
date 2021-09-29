@@ -22,7 +22,7 @@ export class ValeSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.type === "cli")
           .onChange(async (value) => {
             this.plugin.settings.type = value ? "cli" : "server";
-            await this.plugin.saveData(this.plugin.settings);
+            await this.plugin.saveSettings();
           })
       );
 
@@ -35,7 +35,7 @@ export class ValeSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.server.url)
           .onChange(async (value) => {
             this.plugin.settings.server.url = value;
-            await this.plugin.saveData(this.plugin.settings);
+            await this.plugin.saveSettings();
           })
       );
 
@@ -48,7 +48,7 @@ export class ValeSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.cli.valePath)
           .onChange(async (value) => {
             this.plugin.settings.cli.valePath = value;
-            await this.plugin.saveData(this.plugin.settings);
+            await this.plugin.saveSettings();
           })
       );
 
@@ -61,7 +61,7 @@ export class ValeSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.cli.configPath)
           .onChange(async (value) => {
             this.plugin.settings.cli.configPath = value;
-            await this.plugin.saveData(this.plugin.settings);
+            await this.plugin.saveSettings();
           })
       );
   }

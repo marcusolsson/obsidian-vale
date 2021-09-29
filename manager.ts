@@ -15,10 +15,20 @@ import { ValeStyle } from "types";
 import { Extract } from "unzipper";
 
 export class ValeManager {
+  path: string;
   configPath: string;
 
-  constructor(configPath: string) {
+  constructor(path: string, configPath: string) {
+    this.path = path;
     this.configPath = configPath;
+  }
+
+  getPath(): string {
+    return this.path;
+  }
+
+  getConfigPath(): string {
+    return this.configPath;
   }
 
   getStylesPath(): string | undefined {
@@ -30,6 +40,22 @@ export class ValeManager {
     }
 
     return path.join(path.dirname(this.configPath), stylesPath);
+  }
+
+  pathExists(): boolean {
+    try {
+      return statSync(this.path).isFile();
+    } catch {
+      return false;
+    }
+  }
+
+  configPathExists(): boolean {
+    try {
+      return statSync(this.configPath).isFile();
+    } catch {
+      return false;
+    }
   }
 
   installStyle(style: ValeStyle): Promise<void> {

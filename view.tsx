@@ -1,4 +1,5 @@
 import { AppContext, SettingsContext } from "context";
+import { ValeManager } from "manager";
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
@@ -9,10 +10,16 @@ export const VIEW_TYPE_VALE = "vale";
 
 export class ValeResultsView extends ItemView {
   settings: ValeSettings;
+  manager?: ValeManager;
 
-  constructor(leaf: WorkspaceLeaf, settings: ValeSettings) {
+  constructor(
+    leaf: WorkspaceLeaf,
+    settings: ValeSettings,
+    manager?: ValeManager
+  ) {
     super(leaf);
     this.settings = settings;
+    this.manager = manager;
   }
 
   getViewType() {
@@ -32,7 +39,7 @@ export class ValeResultsView extends ItemView {
       <AppContext.Provider value={this.app}>
         <SettingsContext.Provider value={this.settings}>
           <div className="obsidian-vale">
-            <ValeCheck />
+            <ValeCheck manager={this.manager} />
           </div>
         </SettingsContext.Provider>
       </AppContext.Provider>,

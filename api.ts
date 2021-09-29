@@ -1,4 +1,5 @@
 import { spawn } from "child_process";
+import { ValeManager } from "manager";
 import { request } from "obsidian";
 import { ValeResponse } from "types";
 
@@ -25,22 +26,17 @@ export class ValeServer {
   }
 }
 
-interface ValeCliConfig {
-  valePath: string;
-  configPath: string;
-}
-
 export class ValeCli {
-  config: ValeCliConfig;
+  manager: ValeManager;
 
-  constructor(config: ValeCliConfig) {
-    this.config = config;
+  constructor(manager: ValeManager) {
+    this.manager = manager;
   }
 
   async vale(text: string, format: string): Promise<ValeResponse> {
-    const child = spawn(this.config.valePath, [
+    const child = spawn(this.manager.getPath(), [
       "--config",
-      this.config.configPath,
+      this.manager.getConfigPath(),
       "--ext",
       format,
       "--output",
