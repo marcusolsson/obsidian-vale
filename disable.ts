@@ -18,7 +18,7 @@ export class DisableStyleModal extends FuzzySuggestModal<ValeStyle> {
     return style.name;
   }
 
-  onChooseItem(style: ValeStyle, evt: MouseEvent | KeyboardEvent) {
+  onChooseItem(style: ValeStyle): void {
     this.manager.disableStyle(style.name).then(() => {
       new Notice(`Disabled ${style.name}`);
     });

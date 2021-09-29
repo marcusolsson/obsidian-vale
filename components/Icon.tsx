@@ -7,7 +7,11 @@ interface Props {
   className?: string;
 }
 
-export const Icon = ({ name, className, size = 16 }: Props) => {
+export const Icon = ({
+  name,
+  className,
+  size = 16,
+}: Props): React.ReactElement => {
   const ref = React.useRef<HTMLDivElement>();
 
   React.useEffect(() => {

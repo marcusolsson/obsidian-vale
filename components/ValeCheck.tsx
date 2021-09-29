@@ -1,24 +1,29 @@
-import { ValeCli, ValeServer } from "api";
-import { useApp, useSettings } from "hooks";
-import { ValeManager } from "manager";
+import { useApp } from "hooks";
 import { MarkdownView } from "obsidian";
 import * as React from "react";
-import { ValeAlert } from "types";
+import { ValeRunner } from "runner";
+import { CheckInput, ValeAlert } from "types";
+import { EventBus } from "../events";
 import { AlertList } from "./AlertList";
 import { ErrorMessage } from "./ErrorMessage";
 import { Icon } from "./Icon";
-import { LoaderCube } from "./LoaderCube";
 
 interface Props {
-  manager?: ValeManager;
+  runner: ValeRunner;
+  eventBus: EventBus;
 }
 
-export const ValeCheck = ({ manager }: Props) => {
-  const [results, setResults] = React.useState<ValeAlert[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [errorMessages, setErrorMessages] = React.useState<React.ReactNode>();
+interface CheckReport {
+  results: ValeAlert[];
+  errors?: React.ReactNode;
+}
 
-  const { type, server, cli } = useSettings();
+export const ValeCheck = ({ runner, eventBus }: Props): React.ReactElement => {
+  const [loading, setLoading] = React.useState(false);
+  const [report, setReport] = React.useState<CheckReport>({
+    results: [],
+  });
+
   const { workspace } = useApp();
 
   const view = workspace.getActiveViewOfType(MarkdownView);
@@ -35,85 +40,94 @@ export const ValeCheck = ({ manager }: Props) => {
     );
   }
 
-  const check = async () => {
-    setErrorMessages(undefined);
+  const check = async (
+    input: CheckInput,
+    checked: (cb: () => void) => void
+  ) => {
+    const { text, format } = input;
 
-    switch (type) {
-      case "server":
-        try {
-          const serverResults = await new ValeServer(server.url).vale(
-            view.editor.getValue(),
-            "." + view.file.extension
-          );
+    checked(() => {
+      setLoading(true);
+      setReport({
+        results: [],
+        errors: undefined,
+      });
+    });
 
-          setResults(Object.values(serverResults)[0]);
-        } catch (err) {
-          if (
-            err instanceof Error &&
-            err.message === "net::ERR_CONNECTION_REFUSED"
-          ) {
-            setErrorMessages(
-              <ErrorMessage message={"Couldn't connect to Vale Server."} />
+    return runner
+      .run(text, format)
+      .then((response) => {
+        checked(() =>
+          setReport({
+            ...report,
+            results: Object.values(response)[0],
+          })
+        );
+      })
+      .catch((err) => {
+        if (err instanceof Error) {
+          if (err.message === "net::ERR_CONNECTION_REFUSED") {
+            checked(() =>
+              setReport({
+                ...report,
+                errors: (
+                  <ErrorMessage message={"Couldn't connect to Vale Server."} />
+                ),
+              })
             );
-          } else {
-            setErrorMessages(<ErrorMessage message={err.toString()} />);
           }
-        } finally {
-          setLoading(false);
         }
-
-        break;
-      case "cli":
-        const valeExists = manager.pathExists();
-        const configExists = manager.configPathExists();
-
-        if (valeExists && configExists) {
-          try {
-            const cliResults = await new ValeCli(manager).vale(
-              view.editor.getValue(),
-              "." + view.file.extension
-            );
-            setResults(Object.values(cliResults)[0]);
-          } catch (err) {
-            setErrorMessages(<ErrorMessage message={err.toString()} />);
-          } finally {
-            setLoading(false);
-          }
-        } else {
+        checked(() =>
+          setReport({
+            ...report,
+            errors: <ErrorMessage message={err.toString()} />,
+          })
+        );
+      })
+      .finally(() => {
+        checked(() => {
           setLoading(false);
-          setErrorMessages(
-            <>
-              {!valeExists && <ErrorMessage message="Couldn't find vale." />}
-              {!configExists && (
-                <ErrorMessage message="Couldn't find config file." />
-              )}
-            </>
-          );
-        }
-
-        break;
-    }
+        });
+      });
   };
 
   React.useEffect(() => {
-    check();
-  }, [type, server, cli, setResults]);
+    let cancel = false;
+
+    const off = (cb: () => void) => {
+      if (cancel) return;
+      cb();
+    };
+
+    const unregister = eventBus.on("check", (input: CheckInput): void => {
+      check(input, off);
+    });
+
+    // Signal that the view is ready to check the document.
+    eventBus.dispatch("ready", true);
+
+    return () => {
+      unregister();
+      cancel = true;
+    };
+  }, [view]);
 
   if (loading) {
-    return <LoaderCube />;
+    // return <LoaderCube />;
+    return <div className="loader" />;
   }
 
-  if (errorMessages) {
+  if (report.errors) {
     return (
       <>
         <h4>Something went wrong ...</h4>
-        {errorMessages}
+        {report.errors}
       </>
     );
   }
 
-  if (results) {
-    return <AlertList alerts={results} />;
+  if (report.results) {
+    return <AlertList alerts={report.results} />;
   }
 
   return (

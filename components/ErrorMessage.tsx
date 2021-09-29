@@ -5,7 +5,10 @@ interface Props {
   details?: string;
 }
 
-export const ErrorMessage = ({ message, details }: Props) => {
+export const ErrorMessage = ({
+  message,
+  details,
+}: Props): React.ReactElement => {
   return (
     <div className={"error"}>
       <div>{message}</div>

@@ -18,7 +18,7 @@ export class UninstallStyleModal extends FuzzySuggestModal<ValeStyle> {
     return style.name;
   }
 
-  onChooseItem(style: ValeStyle, evt: MouseEvent | KeyboardEvent) {
+  onChooseItem(style: ValeStyle): void {
     this.manager.uninstallStyle(style).then(() => {
       new Notice(`Uninstalled ${style.name}`);
     });

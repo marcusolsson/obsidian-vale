@@ -4,6 +4,7 @@ import { InstallStyleModal } from "install";
 import { ValeManager } from "manager";
 import { FileSystemAdapter, MarkdownView, Plugin } from "obsidian";
 import * as path from "path";
+import { ValeRunner } from "runner";
 import { ValeSettingTab } from "settings";
 import { DEFAULT_SETTINGS, ValeResponse, ValeSettings } from "types";
 import { UninstallStyleModal } from "uninstall";
@@ -13,10 +14,11 @@ export default class ValePlugin extends Plugin {
   settings: ValeSettings;
   view: ValeResultsView;
   manager?: ValeManager;
+  runner?: ValeRunner;
 
   results: ValeResponse;
 
-  async onload() {
+  async onload(): Promise<void> {
     await this.loadSettings();
 
     this.addSettingTab(new ValeSettingTab(this.app, this));
@@ -94,11 +96,11 @@ export default class ValePlugin extends Plugin {
     this.registerView(
       VIEW_TYPE_VALE,
       (leaf) =>
-        (this.view = new ValeResultsView(leaf, this.settings, this.manager))
+        (this.view = new ValeResultsView(leaf, this.settings, this.runner))
     );
   }
 
-  async onunload() {
+  async onunload(): Promise<void> {
     if (this.view) {
       await this.view.onClose();
     }
@@ -108,30 +110,34 @@ export default class ValePlugin extends Plugin {
       .forEach((leaf) => leaf.detach());
   }
 
-  async activateView() {
-    this.app.workspace.detachLeavesOfType(VIEW_TYPE_VALE);
+  async activateView(): Promise<void> {
+    const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE);
 
-    await this.app.workspace.getRightLeaf(false).setViewState({
-      type: VIEW_TYPE_VALE,
-      active: true,
-    });
+    if (leaves.length === 0) {
+      await this.app.workspace.getRightLeaf(false).setViewState({
+        type: VIEW_TYPE_VALE,
+        active: true,
+      });
+    }
+
+    this.view.check();
 
     this.app.workspace.revealLeaf(
       this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE)[0]
     );
   }
 
-  async saveSettings() {
+  async saveSettings(): Promise<void> {
     this.saveData(this.settings);
     this.updateManager();
   }
 
-  async loadSettings() {
+  async loadSettings(): Promise<void> {
     this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
     this.updateManager();
   }
 
-  updateManager() {
+  updateManager(): void {
     this.manager = undefined;
 
     if (this.settings.type === "cli") {
@@ -151,5 +157,7 @@ export default class ValePlugin extends Plugin {
         }
       }
     }
+
+    this.runner = new ValeRunner(this.settings, this.manager);
   }
 }

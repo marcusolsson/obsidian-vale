@@ -1,8 +1,6 @@
 import * as React from "react";
 
-interface Props {}
-
-export const LoaderCube = ({}: Props) => {
+export const LoaderCube = (): React.ReactElement => {
   return (
     <div className="loader-cube">
       <div className="sk-cube sk-cube1"></div>

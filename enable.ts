@@ -18,7 +18,7 @@ export class EnableStyleModal extends FuzzySuggestModal<ValeStyle> {
     return style.name;
   }
 
-  onChooseItem(style: ValeStyle, evt: MouseEvent | KeyboardEvent) {
+  onChooseItem(style: ValeStyle): void {
     this.manager.enableStyle(style.name).then(() => {
       new Notice(`Enabled ${style.name}`);
     });

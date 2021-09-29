@@ -8,7 +8,7 @@ interface Props {
   alerts: ValeAlert[];
 }
 
-export const AlertList = ({ alerts }: Props) => {
+export const AlertList = ({ alerts }: Props): React.ReactElement => {
   const { workspace } = useApp();
 
   return (

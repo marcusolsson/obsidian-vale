@@ -44,20 +44,15 @@ export class ValeCli {
     ]);
 
     let stdout = "";
-    let stderr = "";
 
     if (child.stdout) {
       child.stdout.on("data", (data) => {
         stdout += data;
       });
-
-      child.stderr.on("data", (data) => {
-        stderr += data;
-      });
     }
 
     return new Promise((resolve, reject) => {
-      child.on("error", (err) => reject);
+      child.on("error", reject);
 
       child.on("close", (code) => {
         if (code === 0) {

@@ -1,4 +1,3 @@
-const download = require("download");
 import { ValeManager } from "manager";
 import { App, FuzzySuggestModal, Notice } from "obsidian";
 import { ValeStyle } from "types";
@@ -19,7 +18,7 @@ export class InstallStyleModal extends FuzzySuggestModal<ValeStyle> {
     return style.name;
   }
 
-  onChooseItem(style: ValeStyle) {
+  onChooseItem(style: ValeStyle): void {
     this.manager.installStyle(style).then(() => {
       new Notice(`Installed ${style.name}`);
     });

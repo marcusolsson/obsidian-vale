@@ -44,3 +44,8 @@ export interface ValeStyle {
   homepage?: string;
   url?: string;
 }
+
+export interface CheckInput {
+  text: string;
+  format: string;
+}

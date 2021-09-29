@@ -1,4 +1,4 @@
-const download = require("download");
+import download from "download";
 import {
   createReadStream,
   createWriteStream,
@@ -8,7 +8,7 @@ import {
   unlinkSync,
   writeFileSync,
 } from "fs";
-import { rm } from "fs/promises";
+import { rm, stat } from "fs/promises";
 import { parse, stringify } from "ini";
 import * as path from "path";
 import { ValeStyle } from "types";
@@ -42,26 +42,22 @@ export class ValeManager {
     return path.join(path.dirname(this.configPath), stylesPath);
   }
 
-  pathExists(): boolean {
-    try {
-      return statSync(this.path).isFile();
-    } catch {
-      return false;
-    }
+  async pathExists(): Promise<boolean> {
+    return stat(this.path)
+      .then((stat) => stat.isFile())
+      .catch(() => false);
   }
 
-  configPathExists(): boolean {
-    try {
-      return statSync(this.configPath).isFile();
-    } catch {
-      return false;
-    }
+  async configPathExists(): Promise<boolean> {
+    return stat(this.configPath)
+      .then((stat) => stat.isFile())
+      .catch(() => false);
   }
 
   installStyle(style: ValeStyle): Promise<void> {
     const localPath = path.join(this.getStylesPath(), path.basename(style.url));
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       download(style.url, { extract: true }).pipe(
         createWriteStream(localPath).on("close", () => {
           createReadStream(localPath)
@@ -83,7 +79,7 @@ export class ValeManager {
   enableStyle(name: string): Promise<void> {
     const config = parse(readFileSync(this.configPath, "utf-8"));
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const basedOnStyles = config["*"]["md"].BasedOnStyles as string;
       const styles = basedOnStyles.split(",").map((style) => style.trim());
       const stylesSet = new Set(styles);
@@ -99,7 +95,7 @@ export class ValeManager {
   disableStyle(name: string): Promise<void> {
     const config = parse(readFileSync(this.configPath, "utf-8"));
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const basedOnStyles = config["*"]["md"].BasedOnStyles as string;
       const styles = basedOnStyles.split(",").map((style) => style.trim());
       const stylesSet = new Set(styles);

@@ -7,17 +7,17 @@ interface Props {
   onClick: (alert: ValeAlert) => void;
 }
 
-export const Alert = ({ alert, onClick }: Props) => {
+export const Alert = ({ alert, onClick }: Props): React.ReactElement => {
+  const cb: React.MouseEventHandler<HTMLDivElement> = (
+    e: React.MouseEvent<HTMLDivElement>
+  ) => {
+    // Ignore click when clicking the link.
+    if (e.currentTarget.nodeName === "DIV") {
+      onClick(alert);
+    }
+  };
   return (
-    <div
-      className="alert"
-      onClick={(e) => {
-        // Ignore click when clicking the link.
-        if ((e.target as any).nodeName === "DIV") {
-          onClick(alert);
-        }
-      }}
-    >
+    <div className="alert" onClick={cb}>
       <div className="alert__header">
         <div className="alert__severity">{alert.Severity}</div>
         <div className="alert__check">{alert.Check}</div>
