@@ -15,8 +15,8 @@ export const DEFAULT_SETTINGS: ValeSettings = {
     url: "http://localhost:7777",
   },
   cli: {
-    valePath: "vale",
-    configPath: "$HOME/.vale.ini",
+    valePath: "/usr/local/bin/vale",
+    configPath: ".obsidian/plugins/obsidian-vale/data/.vale.ini",
   },
 };
 
@@ -36,4 +36,11 @@ export interface ValeAlert {
   Severity: string;
   Span: number[];
   Match: string;
+}
+
+export interface ValeStyle {
+  name: string;
+  description?: string;
+  homepage?: string;
+  url?: string;
 }
