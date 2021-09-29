@@ -123,3 +123,8 @@ export const ValeCheck = ({ manager }: Props) => {
     </div>
   );
 };
+
+const randomEncouragement = () => {
+  const phrases = ["Nice! 👌", "You're awesome! 💪", "You did it! 🙌"];
+  return phrases[Math.floor(Math.random() * phrases.length)];
+};
