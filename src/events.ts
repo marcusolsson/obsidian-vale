@@ -5,7 +5,7 @@ type EventType = "ready" | "check";
 // The main purpose of the event bus is to issue commands to the React
 // application.
 export class EventBus {
-  subscribers: Record<string, Function>;
+  private subscribers: Record<string, Function>;
 
   constructor() {
     this.subscribers = {};

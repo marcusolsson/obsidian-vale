@@ -2,7 +2,7 @@ import { App, PluginSettingTab, Setting } from "obsidian";
 import ValePlugin from "./main";
 
 export class ValeSettingTab extends PluginSettingTab {
-  plugin: ValePlugin;
+  private plugin: ValePlugin;
 
   constructor(app: App, plugin: ValePlugin) {
     super(app, plugin);

@@ -4,7 +4,7 @@ import { ValeManager } from "./manager";
 import { ValeResponse } from "./types";
 
 export class ValeServer {
-  url: string;
+  private url: string;
 
   constructor(url: string) {
     this.url = url;

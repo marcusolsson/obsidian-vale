@@ -3,21 +3,21 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { ValeApp } from "./components/ValeApp";
 import { AppContext, SettingsContext } from "./context";
+import { timed } from "./debug";
 import { EventBus } from "./events";
 import { ValeRunner } from "./runner";
 import { ValeSettings } from "./types";
-import { timed } from "./debug";
 
 export const VIEW_TYPE_VALE = "vale";
 
 // ValeView displays the results from a Vale check.
 export class ValeView extends ItemView {
-  settings: ValeSettings;
-  runner: ValeRunner;
-  eventBus: EventBus;
+  private settings: ValeSettings;
+  private runner: ValeRunner;
+  private eventBus: EventBus;
 
-  ready: boolean;
-  unregisterReady: () => void;
+  private ready: boolean;
+  private unregisterReady: () => void;
 
   constructor(leaf: WorkspaceLeaf, settings: ValeSettings, runner: ValeRunner) {
     super(leaf);

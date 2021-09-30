@@ -11,11 +11,11 @@ import { DEFAULT_SETTINGS, ValeSettings } from "./types";
 import { ValeView, VIEW_TYPE_VALE } from "./view";
 
 export default class ValePlugin extends Plugin {
-  settings: ValeSettings;
+  public settings: ValeSettings;
 
-  view: ValeView; // Displays the results.
-  manager?: ValeManager; // Manages operations that require disk access.
-  runner?: ValeRunner; // Runs the actual check.
+  private view: ValeView; // Displays the results.
+  private manager?: ValeManager; // Manages operations that require disk access.
+  private runner?: ValeRunner; // Runs the actual check.
 
   // onload runs when plugin becomes enabled.
   async onload(): Promise<void> {

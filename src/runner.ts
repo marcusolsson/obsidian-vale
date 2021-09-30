@@ -6,10 +6,10 @@ import { ValeResponse, ValeSettings } from "./types";
 // The primary responsibility of the ValeRunner is to make sure only one check
 // is running at any given time.
 export class ValeRunner {
-  settings: ValeSettings;
+  private settings: ValeSettings;
 
   // Only exists when user is using the CLI.
-  manager?: ValeManager;
+  private manager?: ValeManager;
 
   constructor(settings: ValeSettings, manager?: ValeManager) {
     this.settings = settings;

@@ -17,8 +17,8 @@ import { ValeStyle } from "./types";
 // ValeManager exposes file operations for working with the Vale configuration
 // file and styles.
 export class ValeManager {
-  path: string;
-  configPath: string;
+  private path: string;
+  private configPath: string;
 
   constructor(path: string, configPath: string) {
     this.path = path;
