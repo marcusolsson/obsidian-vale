@@ -151,7 +151,6 @@ export default class ValePlugin extends Plugin {
   // initialize rebuilds the manager and runner. Should be run whenever the
   // settings change.
   initialize(): void {
-    console.log(this.settings);
     this.manager =
       this.settings.type === "cli"
         ? new ValeManager(

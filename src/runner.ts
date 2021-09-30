@@ -14,8 +14,6 @@ export class ValeRunner {
   constructor(settings: ValeSettings, manager?: ValeManager) {
     this.settings = settings;
     this.manager = manager;
-
-    console.log("new runner with config", this.manager.getConfigPath());
   }
 
   run = notConcurrent(

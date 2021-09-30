@@ -23,8 +23,6 @@ export class ValeManager {
   constructor(path: string, configPath: string) {
     this.path = path;
     this.configPath = configPath;
-
-    console.log("new manager with configpath", this.configPath);
   }
 
   getPath(): string {
