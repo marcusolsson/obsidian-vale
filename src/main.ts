@@ -1,4 +1,4 @@
-import { FileSystemAdapter, MarkdownView, Plugin, Vault } from "obsidian";
+import { FileSystemAdapter, MarkdownView, Plugin } from "obsidian";
 import * as path from "path";
 import { ValeManager } from "./manager";
 import { DisableStyleModal } from "./modals/disable";
@@ -12,9 +12,10 @@ import { ValeView, VIEW_TYPE_VALE } from "./view";
 
 export default class ValePlugin extends Plugin {
   settings: ValeSettings;
-  view: ValeView;
-  manager?: ValeManager;
-  runner?: ValeRunner;
+
+  view: ValeView; // Displays the results.
+  manager?: ValeManager; // Manages operations that require disk access.
+  runner?: ValeRunner; // Runs the actual check.
 
   // onload runs when plugin becomes enabled.
   async onload(): Promise<void> {
@@ -150,28 +151,30 @@ export default class ValePlugin extends Plugin {
   // initialize rebuilds the manager and runner. Should be run whenever the
   // settings change.
   initialize(): void {
-    this.manager = newValeManager(this.settings, this.app.vault);
+    this.manager =
+      this.settings.type === "cli"
+        ? new ValeManager(
+            this.settings.cli.valePath,
+            this.settings.cli.configPath
+          )
+        : undefined;
+
     this.runner = new ValeRunner(this.settings, this.manager);
   }
-}
 
-const newValeManager = (
-  settings: ValeSettings,
-  vault: Vault
-): ValeManager | undefined => {
-  if (settings.type === "cli") {
-    if (path.isAbsolute(settings.cli.configPath)) {
-      return new ValeManager(settings.cli.valePath, settings.cli.configPath);
-    } else {
-      const { adapter } = vault;
-
-      if (adapter instanceof FileSystemAdapter) {
-        return new ValeManager(
-          settings.cli.valePath,
-          adapter.getFullPath(settings.cli.configPath)
-        );
-      }
+  // If config path is relative, then convert it to an absolute path.
+  // Otherwise, return it as is.
+  normalizeConfigPath(configPath: string) {
+    if (path.isAbsolute(configPath)) {
+      return configPath;
     }
+
+    const { adapter } = this.app.vault;
+
+    if (adapter instanceof FileSystemAdapter) {
+      return adapter.getFullPath(configPath);
+    }
+
+    throw new Error("Unrecognized config path");
   }
-  return undefined;
-};
+}
