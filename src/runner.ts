@@ -1,7 +1,7 @@
 import { ValeCli, ValeServer } from "./api";
+import { timed } from "./debug";
 import { ValeManager } from "./manager";
 import { ValeResponse, ValeSettings } from "./types";
-import { timed } from "./debug";
 
 // The primary responsibility of the ValeRunner is to make sure only one check
 // is running at any given time.
@@ -14,6 +14,8 @@ export class ValeRunner {
   constructor(settings: ValeSettings, manager?: ValeManager) {
     this.settings = settings;
     this.manager = manager;
+
+    console.log("new runner with config", this.manager.getConfigPath());
   }
 
   run = notConcurrent(

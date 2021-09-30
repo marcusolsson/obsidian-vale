@@ -151,20 +151,26 @@ export default class ValePlugin extends Plugin {
   // initialize rebuilds the manager and runner. Should be run whenever the
   // settings change.
   initialize(): void {
+    console.log(this.settings);
     this.manager =
       this.settings.type === "cli"
         ? new ValeManager(
             this.settings.cli.valePath,
-            this.settings.cli.configPath
+            this.normalizeConfigPath(this.settings.cli.configPath)
           )
         : undefined;
 
     this.runner = new ValeRunner(this.settings, this.manager);
+
+    // Detach any leaves that use the old runner.
+    this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE).forEach((leaf) => {
+      leaf.detach();
+    });
   }
 
   // If config path is relative, then convert it to an absolute path.
   // Otherwise, return it as is.
-  normalizeConfigPath(configPath: string) {
+  normalizeConfigPath(configPath: string): string {
     if (path.isAbsolute(configPath)) {
       return configPath;
     }
