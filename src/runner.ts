@@ -1,7 +1,7 @@
 import { ValeCli, ValeServer } from "./api";
 import { ValeManager } from "./manager";
 import { ValeResponse, ValeSettings } from "./types";
-import { timed } from "./utils";
+import { timed } from "./debug";
 
 // The primary responsibility of the ValeRunner is to make sure only one check
 // is running at any given time.

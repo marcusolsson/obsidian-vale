@@ -1,4 +1,4 @@
-import { debug } from "./utils";
+import { debug } from "./debug";
 
 type EventType = "ready" | "check";
 

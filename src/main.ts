@@ -1,13 +1,13 @@
 import { FileSystemAdapter, MarkdownView, Plugin, Vault } from "obsidian";
 import * as path from "path";
-import { DisableStyleModal } from "./disable";
-import { EnableStyleModal } from "./enable";
-import { InstallStyleModal } from "./install";
 import { ValeManager } from "./manager";
+import { DisableStyleModal } from "./modals/disable";
+import { EnableStyleModal } from "./modals/enable";
+import { InstallStyleModal } from "./modals/install";
+import { UninstallStyleModal } from "./modals/uninstall";
 import { ValeRunner } from "./runner";
 import { ValeSettingTab } from "./settings";
 import { DEFAULT_SETTINGS, ValeSettings } from "./types";
-import { UninstallStyleModal } from "./uninstall";
 import { ValeView, VIEW_TYPE_VALE } from "./view";
 
 export default class ValePlugin extends Plugin {

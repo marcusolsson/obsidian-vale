@@ -23,6 +23,8 @@ export const DEFAULT_SETTINGS: ValeSettings = {
 export interface ValeResponse {
   [key: string]: ValeAlert[];
 }
+
+// Mirror the Vale JSON output format.
 export interface ValeAlert {
   Action: {
     Name: string;
@@ -38,6 +40,7 @@ export interface ValeAlert {
   Match: string;
 }
 
+// Schema from https://github.com/errata-ai/styles/blob/master/library.json
 export interface ValeStyle {
   name: string;
   description?: string;

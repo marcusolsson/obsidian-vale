@@ -6,7 +6,7 @@ import { AppContext, SettingsContext } from "./context";
 import { EventBus } from "./events";
 import { ValeRunner } from "./runner";
 import { ValeSettings } from "./types";
-import { timed } from "./utils";
+import { timed } from "./debug";
 
 export const VIEW_TYPE_VALE = "vale";
 
@@ -71,6 +71,8 @@ export class ValeView extends ItemView {
   runValeCheck(): void {
     const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 
+    // Only run the check if there's an active Markdown document and the view
+    // is ready to accept check requests.
     if (view && this.ready) {
       this.eventBus.dispatch("check", {
         text: view.editor.getValue(),
