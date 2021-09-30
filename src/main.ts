@@ -1,10 +1,6 @@
 import { FileSystemAdapter, MarkdownView, Plugin } from "obsidian";
 import * as path from "path";
 import { ValeManager } from "./manager";
-import { DisableStyleModal } from "./modals/disable";
-import { EnableStyleModal } from "./modals/enable";
-import { InstallStyleModal } from "./modals/install";
-import { UninstallStyleModal } from "./modals/uninstall";
 import { ValeRunner } from "./runner";
 import { ValeSettingTab } from "./settings";
 import { DEFAULT_SETTINGS, ValeSettings } from "./types";
@@ -23,26 +19,6 @@ export default class ValePlugin extends Plugin {
 
     this.addSettingTab(new ValeSettingTab(this.app, this));
 
-    this.addCommands();
-
-    this.registerView(
-      VIEW_TYPE_VALE,
-      (leaf) => (this.view = new ValeView(leaf, this.settings, this.runner))
-    );
-  }
-
-  // onload runs when plugin becomes disabled.
-  async onunload(): Promise<void> {
-    if (this.view) {
-      await this.view.onClose();
-    }
-
-    this.app.workspace
-      .getLeavesOfType(VIEW_TYPE_VALE)
-      .forEach((leaf) => leaf.detach());
-  }
-
-  addCommands(): void {
     this.addCommand({
       id: "vale-check-document",
       name: "Check document",
@@ -61,61 +37,21 @@ export default class ValePlugin extends Plugin {
       },
     });
 
-    this.addCommand({
-      id: "vale-uninstall-style",
-      name: "Uninstall style",
-      checkCallback: (checking) => {
-        if (checking) {
-          return this.settings.type === "cli";
-        }
+    this.registerView(
+      VIEW_TYPE_VALE,
+      (leaf) => (this.view = new ValeView(leaf, this.settings, this.runner))
+    );
+  }
 
-        new UninstallStyleModal(this.app, this.manager).open();
+  // onload runs when plugin becomes disabled.
+  async onunload(): Promise<void> {
+    if (this.view) {
+      await this.view.onClose();
+    }
 
-        return true;
-      },
-    });
-
-    this.addCommand({
-      id: "vale-install-style",
-      name: "Install style",
-      checkCallback: (checking) => {
-        if (checking) {
-          return this.settings.type === "cli";
-        }
-
-        new InstallStyleModal(this.app, this.manager).open();
-
-        return true;
-      },
-    });
-
-    this.addCommand({
-      id: "vale-enable-style",
-      name: "Enable style",
-      checkCallback: (checking) => {
-        if (checking) {
-          return this.settings.type === "cli";
-        }
-
-        new EnableStyleModal(this.app, this.manager).open();
-
-        return true;
-      },
-    });
-
-    this.addCommand({
-      id: "vale-disable-style",
-      name: "Disable style",
-      checkCallback: (checking) => {
-        if (checking) {
-          return this.settings.type === "cli";
-        }
-
-        new DisableStyleModal(this.app, this.manager).open();
-
-        return true;
-      },
-    });
+    this.app.workspace
+      .getLeavesOfType(VIEW_TYPE_VALE)
+      .forEach((leaf) => leaf.detach());
   }
 
   // activateView triggers a check and reveals the Vale view, if isn't already
