@@ -14,6 +14,8 @@ import * as path from "path";
 import { Extract } from "unzipper";
 import { ValeStyle } from "./types";
 
+// ValeManager exposes file operations for working with the Vale configuration
+// file and styles.
 export class ValeManager {
   path: string;
   configPath: string;

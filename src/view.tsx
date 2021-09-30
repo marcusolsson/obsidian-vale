@@ -1,7 +1,7 @@
 import { ItemView, MarkdownView, WorkspaceLeaf } from "obsidian";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { ValeCheck } from "./components/ValeCheck";
+import { ValeApp } from "./components/ValeApp";
 import { AppContext, SettingsContext } from "./context";
 import { EventBus } from "./events";
 import { ValeRunner } from "./runner";
@@ -10,7 +10,8 @@ import { timed } from "./utils";
 
 export const VIEW_TYPE_VALE = "vale";
 
-export class ValeResultsView extends ItemView {
+// ValeView displays the results from a Vale check.
+export class ValeView extends ItemView {
   settings: ValeSettings;
   runner: ValeRunner;
   eventBus: EventBus;
@@ -38,9 +39,10 @@ export class ValeResultsView extends ItemView {
   }
 
   async onOpen(): Promise<void> {
+    // Perform a check as soon as the view is ready.
     this.unregisterReady = this.eventBus.on("ready", () => {
       this.ready = true;
-      this.check();
+      this.runValeCheck();
     });
 
     return timed("ValeResultsView.onOpen()", async () => {
@@ -48,7 +50,7 @@ export class ValeResultsView extends ItemView {
         <AppContext.Provider value={this.app}>
           <SettingsContext.Provider value={this.settings}>
             <div className="obsidian-vale">
-              <ValeCheck runner={this.runner} eventBus={this.eventBus} />
+              <ValeApp runner={this.runner} eventBus={this.eventBus} />
             </div>
           </SettingsContext.Provider>
         </AppContext.Provider>,
@@ -60,12 +62,13 @@ export class ValeResultsView extends ItemView {
   async onClose(): Promise<void> {
     this.ready = false;
     this.unregisterReady();
+
     return timed("ValeResultsView.onClose()", async () => {
       ReactDOM.unmountComponentAtNode(this.containerEl.children[1]);
     });
   }
 
-  check(): void {
+  runValeCheck(): void {
     const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 
     if (view && this.ready) {

@@ -18,7 +18,7 @@ interface CheckReport {
   errors?: React.ReactNode;
 }
 
-export const ValeCheck = ({ runner, eventBus }: Props): React.ReactElement => {
+export const ValeApp = ({ runner, eventBus }: Props): React.ReactElement => {
   const [loading, setLoading] = React.useState(false);
   const [report, setReport] = React.useState<CheckReport>({
     results: [],

@@ -2,6 +2,8 @@ import { debug } from "./utils";
 
 type EventType = "ready" | "check";
 
+// The main purpose of the event bus is to issue commands to the React
+// application.
 export class EventBus {
   subscribers: Record<string, Function>;
 
@@ -9,6 +11,7 @@ export class EventBus {
     this.subscribers = {};
   }
 
+  // TODO: Make type-safe rather than relying on Function.
   on(topic: EventType, cb: Function): () => void {
     debug(`Registering subscriber for topic "${topic}"`);
     this.subscribers[topic] = cb;

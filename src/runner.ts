@@ -3,8 +3,12 @@ import { ValeManager } from "./manager";
 import { ValeResponse, ValeSettings } from "./types";
 import { timed } from "./utils";
 
+// The primary responsibility of the ValeRunner is to make sure only one check
+// is running at any given time.
 export class ValeRunner {
   settings: ValeSettings;
+
+  // Only exists when user is using the CLI.
   manager?: ValeManager;
 
   constructor(settings: ValeSettings, manager?: ValeManager) {
@@ -41,6 +45,7 @@ export class ValeRunner {
   );
 }
 
+// notConcurrent ensures there's only ever one promise in-flight.
 const notConcurrent = (
   proc: (text: string, format: string) => PromiseLike<ValeResponse>
 ) => {

@@ -10,7 +10,7 @@ export const timed = <T>(label: string, cb: () => Promise<T>): Promise<T> => {
   return cb();
 };
 
-export const debug = (msg: string) => {
+export const debug = (msg: string): void => {
   if (DEBUG) {
     console.log(msg);
   }
