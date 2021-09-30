@@ -1,7 +1,7 @@
-import { useApp } from "hooks";
 import { MarkdownView } from "obsidian";
 import * as React from "react";
-import { ValeAlert } from "types";
+import { useApp } from "../hooks";
+import { ValeAlert } from "../types";
 import { Alert } from "./Alert";
 
 interface Props {

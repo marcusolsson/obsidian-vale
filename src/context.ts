@@ -1,6 +1,6 @@
 import { App } from "obsidian";
 import * as React from "react";
-import { DEFAULT_SETTINGS, ValeSettings } from "types";
+import { DEFAULT_SETTINGS, ValeSettings } from "./types";
 
 export const AppContext = React.createContext<App>(undefined);
 

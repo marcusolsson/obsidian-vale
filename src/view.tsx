@@ -1,12 +1,12 @@
-import { AppContext, SettingsContext } from "context";
 import { ItemView, MarkdownView, WorkspaceLeaf } from "obsidian";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { ValeRunner } from "runner";
-import { ValeSettings } from "types";
-import { timed } from "utils";
 import { ValeCheck } from "./components/ValeCheck";
+import { AppContext, SettingsContext } from "./context";
 import { EventBus } from "./events";
+import { ValeRunner } from "./runner";
+import { ValeSettings } from "./types";
+import { timed } from "./utils";
 
 export const VIEW_TYPE_VALE = "vale";
 

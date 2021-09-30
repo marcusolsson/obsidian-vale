@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "inlineSourceMap": true,
     "inlineSources": true,
     "module": "ESNext",
     "target": "es6",
-    "allowJs": true,
+    "allowJs": false,
     "jsx": "react",
     "noImplicitAny": true,
     "moduleResolution": "node",
@@ -13,5 +13,5 @@
     "allowSyntheticDefaultImports": true,
     "lib": ["dom", "es5", "scripthost", "es2015"]
   },
-  "include": ["**/*.ts", "view.tsx"]
+  "include": ["**/*.ts", "./src/view.tsx"]
 }

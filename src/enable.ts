@@ -1,6 +1,6 @@
-import { ValeManager } from "manager";
 import { App, FuzzySuggestModal, Notice } from "obsidian";
-import { ValeStyle } from "types";
+import { ValeManager } from "./manager";
+import { ValeStyle } from "./types";
 
 export class EnableStyleModal extends FuzzySuggestModal<ValeStyle> {
   manager: ValeManager;

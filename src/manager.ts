@@ -11,8 +11,8 @@ import {
 import { rm, stat } from "fs/promises";
 import { parse, stringify } from "ini";
 import * as path from "path";
-import { ValeStyle } from "types";
 import { Extract } from "unzipper";
+import { ValeStyle } from "./types";
 
 export class ValeManager {
   path: string;

@@ -4,8 +4,8 @@
   "description": "This is a sample plugin for Obsidian (https://obsidian.md)",
   "main": "main.js",
   "scripts": {
-    "dev": "esbuild main.ts --bundle --minify --platform=node --external:obsidian --external:electron --sourcemap=inline --define:DEBUG=true --outfile=main.js --watch",
-    "build": "esbuild main.ts --bundle --minify --platform=node --external:obsidian --external:electron --define:DEBUG=false --outfile=main.js",
+    "dev": "esbuild ./src/main.ts --bundle --minify --platform=node --external:obsidian --external:electron --sourcemap=inline --define:DEBUG=true --outfile=main.js --watch",
+    "build": "esbuild ./src/main.ts --bundle --minify --platform=node --external:obsidian --external:electron --define:DEBUG=false --outfile=main.js",
     "lint": "eslint ./ --ignore-path .gitignore",
     "format": "prettier --write \"{,!(node_modules)/**/}*.{ts,tsx}\""
   },

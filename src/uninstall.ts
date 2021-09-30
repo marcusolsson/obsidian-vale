@@ -1,8 +1,8 @@
-import { ValeManager } from "manager";
 import { App, FuzzySuggestModal, Notice } from "obsidian";
-import { ValeStyle } from "types";
+import { ValeManager } from "./manager";
+import { ValeStyle } from "./types";
 
-export class InstallStyleModal extends FuzzySuggestModal<ValeStyle> {
+export class UninstallStyleModal extends FuzzySuggestModal<ValeStyle> {
   manager: ValeManager;
 
   constructor(app: App, manager: ValeManager) {
@@ -11,7 +11,7 @@ export class InstallStyleModal extends FuzzySuggestModal<ValeStyle> {
   }
 
   getItems(): ValeStyle[] {
-    return this.manager.getStyles();
+    return this.manager.getInstalled().map((name) => ({ name }));
   }
 
   getItemText(style: ValeStyle): string {
@@ -19,8 +19,8 @@ export class InstallStyleModal extends FuzzySuggestModal<ValeStyle> {
   }
 
   onChooseItem(style: ValeStyle): void {
-    this.manager.installStyle(style).then(() => {
-      new Notice(`Installed ${style.name}`);
+    this.manager.uninstallStyle(style).then(() => {
+      new Notice(`Uninstalled ${style.name}`);
     });
   }
 }

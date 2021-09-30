@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
-import { ValeManager } from "manager";
 import { request } from "obsidian";
-import { ValeResponse } from "types";
+import { ValeManager } from "./manager";
+import { ValeResponse } from "./types";
 
 export class ValeServer {
   url: string;

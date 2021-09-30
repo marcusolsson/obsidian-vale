@@ -1,7 +1,7 @@
-import { ValeCli, ValeServer } from "api";
-import { ValeManager } from "manager";
-import { ValeResponse, ValeSettings } from "types";
-import { timed } from "utils";
+import { ValeCli, ValeServer } from "./api";
+import { ValeManager } from "./manager";
+import { ValeResponse, ValeSettings } from "./types";
+import { timed } from "./utils";
 
 export class ValeRunner {
   settings: ValeSettings;
