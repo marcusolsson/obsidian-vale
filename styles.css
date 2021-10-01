@@ -202,3 +202,17 @@
     height: 5em;
   }
 }
+
+.settings-page-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.settings-page-back-button {
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  cursor: pointer;
+}

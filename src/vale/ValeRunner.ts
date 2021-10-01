@@ -1,7 +1,8 @@
-import { ValeCli, ValeServer } from "./api";
-import { timed } from "./debug";
-import { ValeManager } from "./manager";
-import { ValeResponse, ValeSettings } from "./types";
+import { timed } from "../debug";
+import { ValeResponse, ValeSettings } from "../types";
+import { ValeCli } from "./ValeCli";
+import { ValeConfigManager } from "./ValeConfigManager";
+import { ValeServer } from "./ValeServer";
 
 // The primary responsibility of the ValeRunner is to make sure only one check
 // is running at any given time.
@@ -9,11 +10,11 @@ export class ValeRunner {
   private settings: ValeSettings;
 
   // Only exists when user is using the CLI.
-  private manager?: ValeManager;
+  private configManager?: ValeConfigManager;
 
-  constructor(settings: ValeSettings, manager?: ValeManager) {
+  constructor(settings: ValeSettings, configManager?: ValeConfigManager) {
     this.settings = settings;
-    this.manager = manager;
+    this.configManager = configManager;
   }
 
   run = notConcurrent(
@@ -23,12 +24,12 @@ export class ValeRunner {
           return new ValeServer(this.settings.server.url).vale(text, format);
         } else if (this.settings.type === "cli") {
           const [valeExists, configExists] = await Promise.all([
-            this.manager.pathExists(),
-            this.manager.configPathExists(),
+            this.configManager.pathExists(),
+            this.configManager.configPathExists(),
           ]);
 
           if (valeExists && configExists) {
-            return new ValeCli(this.manager).vale(text, format);
+            return new ValeCli(this.configManager).vale(text, format);
           }
 
           if (!valeExists) {

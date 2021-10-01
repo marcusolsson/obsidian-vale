@@ -3,14 +3,17 @@ import * as React from "react";
 
 interface Props {
   name: string;
+
+  onClick?: () => void;
   size?: number;
   className?: string;
 }
 
 export const Icon = ({
   name,
-  className,
+  onClick,
   size = 16,
+  className,
 }: Props): React.ReactElement => {
   const ref = React.useRef<HTMLDivElement>();
 
@@ -28,6 +31,7 @@ export const Icon = ({
         width: size,
         height: size,
       }}
+      onClick={onClick}
     />
   );
 };

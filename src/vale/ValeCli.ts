@@ -1,42 +1,18 @@
 import { spawn } from "child_process";
-import { request } from "obsidian";
-import { ValeManager } from "./manager";
-import { ValeResponse } from "./types";
-
-export class ValeServer {
-  private url: string;
-
-  constructor(url: string) {
-    this.url = url;
-  }
-
-  async vale(text: string, format: string): Promise<ValeResponse> {
-    const formData = `text=${encodeURIComponent(
-      text
-    )}&format=${encodeURIComponent(format)}`;
-
-    const res = await request({
-      url: this.url + "/vale",
-      method: "POST",
-      contentType: "application/x-www-form-urlencoded",
-      body: formData,
-    });
-
-    return JSON.parse(res);
-  }
-}
+import { ValeResponse } from "../types";
+import { ValeConfigManager } from "./ValeConfigManager";
 
 export class ValeCli {
-  manager: ValeManager;
+  configManager: ValeConfigManager;
 
-  constructor(manager: ValeManager) {
-    this.manager = manager;
+  constructor(configManager: ValeConfigManager) {
+    this.configManager = configManager;
   }
 
   async vale(text: string, format: string): Promise<ValeResponse> {
-    const child = spawn(this.manager.getPath(), [
+    const child = spawn(this.configManager.getPath(), [
       "--config",
-      this.manager.getConfigPath(),
+      this.configManager.getConfigPath(),
       "--ext",
       format,
       "--output",

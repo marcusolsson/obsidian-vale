@@ -13,5 +13,11 @@
     "allowSyntheticDefaultImports": true,
     "lib": ["dom", "es5", "scripthost", "es2015"]
   },
-  "include": ["**/*.ts", "./src/view.tsx"]
+  "include": [
+    "**/*.ts",
+    "src/ValeView.tsx",
+    "src/settings/ValeSettingTab.tsx",
+    "src/settings/RuleSettings.tsx",
+    "src/settings/GeneralSettings.tsx"
+  ]
 }

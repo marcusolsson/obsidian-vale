@@ -52,3 +52,23 @@ export interface CheckInput {
   text: string;
   format: string;
 }
+
+export type ValeRuleSeverity = "default" | "suggestion" | "warning" | "error";
+
+export interface ValeRule {
+  name: string;
+  severity: ValeRuleSeverity;
+  disabled: boolean;
+}
+
+export interface ValeConfig {
+  StylesPath?: string;
+  "*": {
+    md: {
+      BasedOnStyles?: string;
+
+      // Rules
+      [key: string]: string;
+    };
+  };
+}

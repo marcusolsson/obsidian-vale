@@ -1,16 +1,16 @@
 import { FileSystemAdapter, MarkdownView, Plugin } from "obsidian";
 import * as path from "path";
-import { ValeManager } from "./manager";
-import { ValeRunner } from "./runner";
-import { ValeSettingTab } from "./settings";
+import { ValeSettingTab } from "./settings/ValeSettingTab";
 import { DEFAULT_SETTINGS, ValeSettings } from "./types";
-import { ValeView, VIEW_TYPE_VALE } from "./view";
+import { ValeConfigManager } from "./vale/ValeConfigManager";
+import { ValeRunner } from "./vale/ValeRunner";
+import { ValeView, VIEW_TYPE_VALE } from "./ValeView";
 
 export default class ValePlugin extends Plugin {
   public settings: ValeSettings;
 
   private view: ValeView; // Displays the results.
-  private manager?: ValeManager; // Manages operations that require disk access.
+  private configManager?: ValeConfigManager; // Manages operations that require disk access.
   private runner?: ValeRunner; // Runs the actual check.
 
   // onload runs when plugin becomes enabled.
@@ -84,18 +84,18 @@ export default class ValePlugin extends Plugin {
     this.initialize();
   }
 
-  // initialize rebuilds the manager and runner. Should be run whenever the
+  // initialize rebuilds the config manager and runner. Should be run whenever the
   // settings change.
   initialize(): void {
-    this.manager =
+    this.configManager =
       this.settings.type === "cli"
-        ? new ValeManager(
+        ? new ValeConfigManager(
             this.settings.cli.valePath,
             this.normalizeConfigPath(this.settings.cli.configPath)
           )
         : undefined;
 
-    this.runner = new ValeRunner(this.settings, this.manager);
+    this.runner = new ValeRunner(this.settings, this.configManager);
 
     // Detach any leaves that use the old runner.
     this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE).forEach((leaf) => {

@@ -4,8 +4,8 @@ import * as ReactDOM from "react-dom";
 import { ValeApp } from "./components/ValeApp";
 import { AppContext, SettingsContext } from "./context";
 import { timed } from "./debug";
-import { EventBus } from "./events";
-import { ValeRunner } from "./runner";
+import { EventBus } from "./EventBus";
+import { ValeRunner } from "./ValeRunner";
 import { ValeSettings } from "./types";
 
 export const VIEW_TYPE_VALE = "vale";

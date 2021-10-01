@@ -1,9 +1,9 @@
 import { MarkdownView } from "obsidian";
 import * as React from "react";
-import { EventBus } from "../events";
+import { EventBus } from "../EventBus";
 import { useApp } from "../hooks";
-import { ValeRunner } from "../runner";
 import { CheckInput, ValeAlert } from "../types";
+import { ValeRunner } from "../vale/ValeRunner";
 import { AlertList } from "./AlertList";
 import { ErrorMessage } from "./ErrorMessage";
 import { Icon } from "./Icon";
