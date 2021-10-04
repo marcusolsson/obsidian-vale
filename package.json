@@ -1,7 +1,7 @@
 {
-  "name": "obsidian-sample-plugin",
-  "version": "0.4.2",
-  "description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+  "name": "obsidian-vale",
+  "version": "0.5.0",
+  "description": "A Vale client for Obsidian.",
   "main": "main.js",
   "scripts": {
     "dev": "esbuild ./src/main.ts --bundle --minify --platform=node --external:obsidian --external:electron --sourcemap=inline --define:DEBUG=true --outfile=main.js --watch",
@@ -9,8 +9,10 @@
     "lint": "eslint ./ --ignore-path .gitignore",
     "format": "prettier --write \"{,!(node_modules)/**/}*.{ts,tsx}\""
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "obsidian-plugin"
+  ],
+  "author": "Marcus Olsson",
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^18.0.0",
