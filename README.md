@@ -1,5 +1,7 @@
 # Obsidian Vale
 
+[![Donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=NT93NXBDFWH6J)
+
 A [Vale](https://docs.errata.ai/) client for Obsidian.
 
 ![Screenshot](screenshot.png)
