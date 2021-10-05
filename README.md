@@ -1,5 +1,6 @@
 # Obsidian Vale
 
+[![Build Obsidian plugin](https://github.com/marcusolsson/obsidian-vale/actions/workflows/release.yml/badge.svg)](https://github.com/marcusolsson/obsidian-vale/actions/workflows/release.yml)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=NT93NXBDFWH6J)
 
 A [Vale](https://docs.errata.ai/) client for Obsidian.
