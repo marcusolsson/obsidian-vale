@@ -127,6 +127,22 @@ export const ValeApp = ({ runner, eventBus }: Props): React.ReactElement => {
   }
 
   if (report.results) {
+    const editor = view.sourceMode.cmEditor;
+
+    // Clear marks from previous check.
+    editor.getAllMarks().forEach((mark) => mark.clear());
+
+    report.results.forEach((alert: ValeAlert) => {
+      editor.markText(
+        { line: alert.Line - 1, ch: alert.Span[0] - 1 },
+        { line: alert.Line - 1, ch: alert.Span[1] },
+        {
+          className: `vale-underline vale-${alert.Severity}`,
+          clearOnEnter: false,
+        }
+      );
+    });
+
     return <AlertList alerts={report.results} />;
   }
 

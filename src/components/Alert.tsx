@@ -19,8 +19,12 @@ export const Alert = ({ alert, onClick }: Props): React.ReactElement => {
   return (
     <div className="alert" onClick={cb}>
       <div className="alert__header">
-        <div className="alert__severity">{alert.Severity}</div>
-        <div className="alert__check">{alert.Check}</div>
+        <div
+          className={`alert__severity alert__severity-text--${alert.Severity}`}
+        >
+          {alert.Severity}
+        </div>
+        <div className={`alert__check`}>{alert.Check}</div>
         {alert.Link && (
           <>
             <div style={{ flexGrow: 1 }} />

@@ -20,10 +20,18 @@ export const AlertList = ({ alerts }: Props): React.ReactElement => {
             alert={alert}
             onClick={(alert) => {
               const view = workspace.getActiveViewOfType(MarkdownView);
+              const editor = view.sourceMode.cmEditor;
 
               if (view.getMode() === "source") {
-                view.editor.focus();
-                view.editor.setSelection(
+                // Clear previously highlighted alert.
+                editor
+                  .getAllMarks()
+                  .filter((mark) =>
+                    mark.className.contains("vale-underline-highlight")
+                  )
+                  .forEach((mark) => mark.clear());
+
+                editor.markText(
                   {
                     line: alert.Line - 1,
                     ch: alert.Span[0] - 1,
@@ -31,8 +39,16 @@ export const AlertList = ({ alerts }: Props): React.ReactElement => {
                   {
                     line: alert.Line - 1,
                     ch: alert.Span[1],
+                  },
+                  {
+                    className: "vale-underline-highlight",
                   }
                 );
+
+                editor.scrollIntoView({
+                  line: alert.Line - 1,
+                  ch: alert.Span[0] - 1,
+                });
               }
             }}
           />

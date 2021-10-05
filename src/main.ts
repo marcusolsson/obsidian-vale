@@ -49,9 +49,17 @@ export default class ValePlugin extends Plugin {
       await this.view.onClose();
     }
 
+    // Remove all open Vale leaves.
     this.app.workspace
       .getLeavesOfType(VIEW_TYPE_VALE)
       .forEach((leaf) => leaf.detach());
+
+    // Remove all marks from the previous check.
+    this.app.workspace.iterateCodeMirrors((cm) => {
+      cm.getAllMarks()
+        .filter((mark) => mark.className.contains("vale-underline"))
+        .forEach((mark) => mark.clear());
+    });
   }
 
   // activateView triggers a check and reveals the Vale view, if isn't already
