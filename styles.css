@@ -11,9 +11,15 @@
   --vale-alert-link-color-hover: var(--text-normal);
 
   /* Severity */
-  --vale-alert-severity-color: var(--text-on-accent);
-  --vale-alert-severity-background-color: var(--background-modifier-error);
-  --vale-alert-severity-border-color: transparent;
+  --vale-alert-severity-suggestion-color: rgba(0, 0, 0, 0.87);
+  --vale-alert-severity-suggestion-background-color: #8981f3;
+  --vale-alert-severity-suggestion-border-color: transparent;
+  --vale-alert-severity-warning-color: rgba(0, 0, 0, 0.87);
+  --vale-alert-severity-warning-background-color: #e9b35f;
+  --vale-alert-severity-warning-border-color: transparent;
+  --vale-alert-severity-error-color: rgba(0, 0, 0, 0.87);
+  --vale-alert-severity-error-background-color: #da615c;
+  --vale-alert-severity-error-border-color: transparent;
 
   /* Check name */
   --vale-alert-check-color: var(--text-muted);
@@ -67,33 +73,30 @@
 }
 
 .obsidian-vale .alert__severity {
-  border-radius: 3px;
-  padding: 2px 3px;
   font-size: 11px;
-  line-height: 1;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-weight: 600;
+  text-transform: capitalize;
+}
 
-  /* Customizable */
-  background-color: var(--vale-alert-severity-background-color);
-  color: var(--vale-alert-severity-color);
-  border: 1px solid var(--vale-alert-severity-border-color);
+.obsidian-vale .alert__severity-text--error {
+  color: var(--vale-alert-severity-error-background-color);
+}
+.obsidian-vale .alert__severity-text--warning {
+  color: var(--vale-alert-severity-warning-background-color);
+}
+.obsidian-vale .alert__severity-text--suggestion {
+  color: var(--vale-alert-severity-suggestion-background-color);
 }
 
 .obsidian-vale .alert__check {
-  border-radius: 3px;
-  padding: 2px 3px;
-  line-height: 1;
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-
-  /* Customizable */
-  background-color: var(--vale-alert-check-background-color);
-  border: 1px solid var(--vale-alert-check-border-color);
-  color: var(--vale-alert-check-color);
+  font-weight: 600;
 }
 
 .obsidian-vale .alert__match {
@@ -215,4 +218,20 @@
   margin: 0;
   line-height: 1;
   cursor: pointer;
+}
+
+.vale-underline-highlight {
+  background-color: var(--text-highlight-bg);
+}
+.vale-underline {
+  box-shadow: inset 0 -2px #8981f3;
+}
+.vale-underline.vale-error {
+  box-shadow: inset 0 -2px #da615c;
+}
+.vale-underline.vale-warning {
+  box-shadow: inset 0 -2px #e9b35f;
+}
+.vale-underline.vale-suggestion {
+  box-shadow: inset 0 -2px #8981f3;
 }

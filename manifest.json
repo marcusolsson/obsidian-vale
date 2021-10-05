@@ -1,10 +1,10 @@
 {
   "id": "obsidian-vale",
   "name": "Vale",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "minAppVersion": "0.9.12",
   "description": "A Vale client for Obsidian.",
   "author": "Marcus Olsson",
   "authorUrl": "https://marcus.se.net",
-  "isDesktopOnly": false
+  "isDesktopOnly": true
 }
