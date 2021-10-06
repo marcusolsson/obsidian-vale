@@ -5,19 +5,31 @@ import { Icon } from "./Icon";
 interface Props {
   alert: ValeAlert;
   onClick: (alert: ValeAlert) => void;
+  highlight: boolean;
 }
 
-export const Alert = ({ alert, onClick }: Props): React.ReactElement => {
-  const cb: React.MouseEventHandler<HTMLDivElement> = (
-    e: React.MouseEvent<HTMLDivElement>
-  ) => {
-    // Ignore click when clicking the link.
-    if (e.currentTarget.nodeName === "DIV") {
-      onClick(alert);
-    }
-  };
+export const Alert = ({
+  alert,
+  onClick,
+  highlight,
+}: Props): React.ReactElement => {
+  const ref = React.useRef<HTMLDivElement>();
+
+  if (ref.current && highlight) {
+    ref.current.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   return (
-    <div className="alert" onClick={cb}>
+    <div
+      ref={ref}
+      className={`alert${highlight ? " alert--highlighted" : ""}`}
+      onClick={(e) => {
+        // Ignore click when clicking the link.
+        if (e.currentTarget.nodeName === "DIV") {
+          onClick(alert);
+        }
+      }}
+    >
       <div className="alert__header">
         <div
           className={`alert__severity alert__severity-text--${alert.Severity}`}

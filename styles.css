@@ -27,8 +27,9 @@
   --vale-alert-check-border-color: var(--background-modifier-border);
 
   /* Matched text */
-  --vale-alert-match-color: var(--text-on-accent);
-  --vale-alert-match-background-color: var(--interactive-accent);
+  --vale-alert-match-color: var(--text-normal);
+  --vale-alert-match-background-color: var(--interactive-normal);
+  --vale-alert-match-border-color: var(--background-modifier-border);
 
   height: 100%;
 }
@@ -52,7 +53,7 @@
   transition: 0.2s all;
 
   /* Customizable */
-  border: 1px solid var(--vale-alert-border-color-hover);
+  /* border: 1px solid var(--vale-alert-border-color-hover); */
 }
 
 .obsidian-vale .alert__header {
@@ -100,7 +101,7 @@
 }
 
 .obsidian-vale .alert__match {
-  font-size: 16px;
+  font-size: 1rem;
   padding: 5px 0;
   white-space: wrap;
   overflow: hidden;
@@ -109,9 +110,10 @@
   background-color: var(--vale-alert-match-background-color);
   color: var(--vale-alert-match-color);
   border-radius: 3px;
+  border: 1px solid var(--vale-alert-match-border-color);
   display: inline-block;
   line-height: 1;
-  padding: 4px 4px;
+  padding: 4px 6px;
 }
 
 .obsidian-vale .alert__message {
@@ -226,6 +228,10 @@
 .vale-underline {
   box-shadow: inset 0 -2px #8981f3;
 }
+.vale-underline:hover {
+  cursor: pointer;
+}
+
 .vale-underline.vale-error {
   box-shadow: inset 0 -2px #da615c;
 }
@@ -234,4 +240,16 @@
 }
 .vale-underline.vale-suggestion {
   box-shadow: inset 0 -2px #8981f3;
+}
+
+.obsidian-vale .alert--highlighted {
+  border: 1px solid var(--interactive-accent);
+  border-left-width: 10px;
+}
+
+.obsidian-vale .alert--highlighted:last-child {
+  margin-bottom: 0;
+}
+.obsidian-vale .alert--highlighted:first-child {
+  margin-top: 0;
 }

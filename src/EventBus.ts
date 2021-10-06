@@ -1,6 +1,11 @@
 import { debug } from "./debug";
 
-type EventType = "ready" | "check";
+type EventType =
+  | "ready"
+  | "check"
+  | "select-alert"
+  | "deselect-alert"
+  | "alerts";
 
 // The main purpose of the event bus is to issue commands to the React
 // application.

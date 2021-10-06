@@ -11,6 +11,7 @@ import { Icon } from "./Icon";
 interface Props {
   runner: ValeRunner;
   eventBus: EventBus;
+  onAlertClick: (alert: ValeAlert) => void;
 }
 
 interface CheckReport {
@@ -18,8 +19,14 @@ interface CheckReport {
   errors?: React.ReactNode;
 }
 
-export const ValeApp = ({ runner, eventBus }: Props): React.ReactElement => {
+export const ValeApp = ({
+  runner,
+  eventBus,
+  onAlertClick,
+}: Props): React.ReactElement => {
   const [loading, setLoading] = React.useState(false);
+  const [highlightAlert, setHighlightAlert] = React.useState<ValeAlert>();
+
   const [report, setReport] = React.useState<CheckReport>({
     results: [],
   });
@@ -57,12 +64,11 @@ export const ValeApp = ({ runner, eventBus }: Props): React.ReactElement => {
     return runner
       .run(text, format)
       .then((response) => {
-        checked(() =>
-          setReport({
-            ...report,
-            results: Object.values(response)[0],
-          })
-        );
+        checked(() => {
+          const results = Object.values(response)[0];
+          setReport({ ...report, results });
+          eventBus.dispatch("alerts", results);
+        });
       })
       .catch((err) => {
         if (err instanceof Error) {
@@ -90,6 +96,21 @@ export const ValeApp = ({ runner, eventBus }: Props): React.ReactElement => {
         });
       });
   };
+
+  React.useEffect(() => {
+    const unr = eventBus.on("select-alert", (alert: ValeAlert) => {
+      setHighlightAlert(alert);
+    });
+
+    const unr2 = eventBus.on("deselect-alert", () => {
+      setHighlightAlert(undefined);
+    });
+
+    return () => {
+      unr();
+      unr2();
+    };
+  }, [report]);
 
   React.useEffect(() => {
     let cancel = false;
@@ -127,23 +148,13 @@ export const ValeApp = ({ runner, eventBus }: Props): React.ReactElement => {
   }
 
   if (report.results) {
-    const editor = view.sourceMode.cmEditor;
-
-    // Clear marks from previous check.
-    editor.getAllMarks().forEach((mark) => mark.clear());
-
-    report.results.forEach((alert: ValeAlert) => {
-      editor.markText(
-        { line: alert.Line - 1, ch: alert.Span[0] - 1 },
-        { line: alert.Line - 1, ch: alert.Span[1] },
-        {
-          className: `vale-underline vale-${alert.Severity}`,
-          clearOnEnter: false,
-        }
-      );
-    });
-
-    return <AlertList alerts={report.results} />;
+    return (
+      <AlertList
+        alerts={report.results}
+        highlight={highlightAlert}
+        onClick={onAlertClick}
+      />
+    );
   }
 
   return (
