@@ -10,7 +10,7 @@ export interface ValeSettings {
 }
 
 export const DEFAULT_SETTINGS: ValeSettings = {
-  type: "server",
+  type: "cli",
   server: {
     url: "http://localhost:7777",
   },

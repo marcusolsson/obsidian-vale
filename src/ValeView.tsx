@@ -5,8 +5,8 @@ import { ValeApp } from "./components/ValeApp";
 import { AppContext, SettingsContext } from "./context";
 import { timed } from "./debug";
 import { EventBus } from "./EventBus";
-import { ValeRunner } from "./ValeRunner";
-import { ValeSettings } from "./types";
+import { ValeAlert, ValeSettings } from "./types";
+import { ValeRunner } from "./vale/ValeRunner";
 
 export const VIEW_TYPE_VALE = "vale";
 
@@ -19,11 +19,20 @@ export class ValeView extends ItemView {
   private ready: boolean;
   private unregisterReady: () => void;
 
-  constructor(leaf: WorkspaceLeaf, settings: ValeSettings, runner: ValeRunner) {
+  private onAlertClick: (alert: ValeAlert) => void;
+
+  constructor(
+    leaf: WorkspaceLeaf,
+    settings: ValeSettings,
+    runner: ValeRunner,
+    eventBus: EventBus,
+    onAlertClick: (alert: ValeAlert) => void
+  ) {
     super(leaf);
     this.settings = settings;
     this.runner = runner;
-    this.eventBus = new EventBus();
+    this.eventBus = eventBus;
+    this.onAlertClick = onAlertClick;
   }
 
   getViewType(): string {
@@ -50,7 +59,11 @@ export class ValeView extends ItemView {
         <AppContext.Provider value={this.app}>
           <SettingsContext.Provider value={this.settings}>
             <div className="obsidian-vale">
-              <ValeApp runner={this.runner} eventBus={this.eventBus} />
+              <ValeApp
+                runner={this.runner}
+                eventBus={this.eventBus}
+                onAlertClick={this.onAlertClick}
+              />
             </div>
           </SettingsContext.Provider>
         </AppContext.Provider>,
