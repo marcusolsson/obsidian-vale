@@ -38,18 +38,28 @@ export class ValeConfigManager {
   }
 
   async installStyle(style: ValeStyle): Promise<void> {
-    const localPath = path.join(
+    const zipPath = path.join(
       await this.getStylesPath(),
       path.basename(style.url)
     );
 
+    const isInstalled = await stat(
+      path.join(await this.getStylesPath(), style.name)
+    )
+      .then((stats) => stats.isDirectory())
+      .catch(() => false);
+
+    if (isInstalled) {
+      return;
+    }
+
     return new Promise((resolve) => {
       download(style.url, { extract: true }).pipe(
-        createWriteStream(localPath).on("close", () => {
-          createReadStream(localPath)
-            .pipe(Extract({ path: path.dirname(localPath) }))
+        createWriteStream(zipPath).on("close", () => {
+          createReadStream(zipPath)
+            .pipe(Extract({ path: path.dirname(zipPath) }))
             .on("close", () => {
-              unlinkSync(localPath);
+              unlinkSync(zipPath);
               resolve();
             });
         })
@@ -58,8 +68,10 @@ export class ValeConfigManager {
   }
 
   async uninstallStyle(style: ValeStyle): Promise<void> {
-    const stylePath = path.join(await this.getStylesPath(), style.name);
-    return rm(stylePath, { recursive: true });
+    return rm(path.join(await this.getStylesPath(), style.name), {
+      force: true,
+      recursive: true,
+    });
   }
 
   async loadConfig(): Promise<ValeConfig> {
