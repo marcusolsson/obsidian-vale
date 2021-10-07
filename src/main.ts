@@ -1,9 +1,15 @@
 import CodeMirror from "codemirror";
 import { EventBus } from "EventBus";
+import { mkdir } from "fs/promises";
 import { FileSystemAdapter, MarkdownView, Plugin } from "obsidian";
 import * as path from "path";
 import { ValeSettingTab } from "./settings/ValeSettingTab";
-import { DEFAULT_SETTINGS, ValeAlert, ValeSettings } from "./types";
+import {
+  DEFAULT_SETTINGS,
+  DEFAULT_VALE_INI,
+  ValeAlert,
+  ValeSettings,
+} from "./types";
 import { ValeConfigManager } from "./vale/ValeConfigManager";
 import { ValeRunner } from "./vale/ValeRunner";
 import { ValeView, VIEW_TYPE_VALE } from "./ValeView";
@@ -24,6 +30,8 @@ export default class ValePlugin extends Plugin {
 
   // onload runs when plugin becomes enabled.
   async onload(): Promise<void> {
+    this.initializeDataPath();
+
     await this.loadSettings();
 
     this.addSettingTab(new ValeSettingTab(this.app, this));
@@ -114,8 +122,32 @@ export default class ValePlugin extends Plugin {
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign(
+      Object.assign({}, DEFAULT_SETTINGS),
+      await this.loadData()
+    );
     this.initializeValeRunner();
+  }
+
+  // initializeDataPath creates a directory inside the plugin directory for
+  // storing default Vale configuration.
+  async initializeDataPath(): Promise<void> {
+    const defaultConfigManager = new ValeConfigManager(
+      DEFAULT_SETTINGS.cli.valePath,
+      this.normalizeConfigPath(DEFAULT_SETTINGS.cli.configPath)
+    );
+
+    await mkdir(path.dirname(defaultConfigManager.getConfigPath()), {
+      recursive: true,
+    });
+
+    if (!(await defaultConfigManager.configPathExists())) {
+      await defaultConfigManager.saveConfig(DEFAULT_VALE_INI);
+    }
+
+    await mkdir(await defaultConfigManager.getStylesPath(), {
+      recursive: true,
+    });
   }
 
   // initializeValeRunner rebuilds the config manager and runner. Should be run

@@ -72,3 +72,12 @@ export interface ValeConfig {
     };
   };
 }
+
+export const DEFAULT_VALE_INI: ValeConfig = {
+  StylesPath: "styles",
+  "*": {
+    md: {
+      BasedOnStyles: "Vale",
+    },
+  },
+};

@@ -38,14 +38,11 @@ export class ValeConfigManager {
   }
 
   async installStyle(style: ValeStyle): Promise<void> {
-    const zipPath = path.join(
-      await this.getStylesPath(),
-      path.basename(style.url)
-    );
+    const stylesPath = await this.getStylesPath();
 
-    const isInstalled = await stat(
-      path.join(await this.getStylesPath(), style.name)
-    )
+    const zipPath = path.join(stylesPath, path.basename(style.url));
+
+    const isInstalled = await stat(path.join(stylesPath, style.name))
       .then((stats) => stats.isDirectory())
       .catch(() => false);
 
@@ -75,11 +72,10 @@ export class ValeConfigManager {
   }
 
   async loadConfig(): Promise<ValeConfig> {
-    const content = await readFile(this.configPath, "utf-8");
-    return parse(content) as ValeConfig;
+    return parse(await readFile(this.configPath, "utf-8")) as ValeConfig;
   }
 
-  async saveConfig(config: ValeConfig): Promise<void> {
+  saveConfig(config: ValeConfig): Promise<void> {
     return writeFile(this.configPath, stringify(config), { encoding: "utf-8" });
   }
 
