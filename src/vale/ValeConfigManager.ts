@@ -184,8 +184,20 @@ export class ValeConfigManager {
   }
 
   async installVale(): Promise<string> {
-    const url =
-      "https://github.com/errata-ai/vale/releases/download/v2.11.1/vale_2.11.1_macOS_64-bit.tar.gz";
+    const releaseUrl = (platform: string) => {
+      switch (platform) {
+        case "linux":
+          return "https://github.com/errata-ai/vale/releases/download/v2.11.1/vale_2.11.1_Linux_64-bit.tar.gz";
+        case "darwin":
+          return "https://github.com/errata-ai/vale/releases/download/v2.11.1/vale_2.11.1_macOS_64-bit.tar.gz";
+        case "win32":
+          return "https://github.com/errata-ai/vale/releases/download/v2.11.1/vale_2.11.1_Windows_64-bit.zip";
+        default:
+          throw new Error("Unsupported platform");
+      }
+    };
+
+    const url = releaseUrl(process.platform);
 
     const zipPath = path.join(
       path.dirname(this.getConfigPath()),
@@ -201,16 +213,15 @@ export class ValeConfigManager {
       console.error(e);
     }
 
-    return path.join(destinationPath, "vale");
+    return path.join(
+      destinationPath,
+      "vale" + process.platform === "win32" ? ".exe" : ""
+    );
   }
 
   // initializeDataPath creates a directory inside the plugin directory for
   // storing default Vale configuration.
   async initializeDataPath(): Promise<void> {
-    await mkdir(path.dirname(this.getConfigPath()), {
-      recursive: true,
-    });
-
     if (!(await this.configPathExists())) {
       await this.saveConfig(DEFAULT_VALE_INI);
     }
