@@ -24,7 +24,7 @@ export const Alert = ({
       ref={ref}
       className={`alert${highlight ? " alert--highlighted" : ""}`}
       onClick={(e) => {
-        // Ignore click when clicking the link.
+        // Ignore click when clicking the alert link.
         if (e.currentTarget.nodeName === "DIV") {
           onClick(alert);
         }

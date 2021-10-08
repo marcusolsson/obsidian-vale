@@ -4,8 +4,9 @@ export interface ValeSettings {
     url: string;
   };
   cli: {
-    valePath: string;
-    configPath: string;
+    managed: boolean;
+    valePath?: string;
+    configPath?: string;
   };
 }
 
@@ -15,8 +16,9 @@ export const DEFAULT_SETTINGS: ValeSettings = {
     url: "http://localhost:7777",
   },
   cli: {
-    valePath: "/usr/local/bin/vale",
-    configPath: ".obsidian/plugins/obsidian-vale/data/.vale.ini",
+    managed: true,
+    valePath: "",
+    configPath: "",
   },
 };
 

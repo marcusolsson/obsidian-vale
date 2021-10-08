@@ -1,39 +1,38 @@
+import { useConfigManager } from "hooks";
 import ValePlugin from "main";
 import React from "react";
 import { ValeSettings } from "../types";
-import { ValeConfigManager } from "../vale/ValeConfigManager";
 import { GeneralSettings } from "./GeneralSettings";
 import { RuleSettings } from "./RuleSettings";
 import { StyleSettings } from "./StyleSettings";
 
 interface Props {
-  settings: ValeSettings;
-  onSettingsChange: (settings: ValeSettings) => void;
   plugin: ValePlugin;
 }
 
-export const SettingsRouter = ({
-  settings,
-  onSettingsChange,
-  plugin,
-}: Props): React.ReactElement => {
+export const SettingsRouter = ({ plugin }: Props): React.ReactElement => {
+  const [settings, setSettings] = React.useState<ValeSettings>(plugin.settings);
   const [style, setStyle] = React.useState<string>();
   const [page, setPage] = React.useState<string>("General");
+  const [validConfigPath, setValidConfigPath] = React.useState(false);
 
-  const newConfigManager = (settings: ValeSettings) =>
-    new ValeConfigManager(
-      settings.cli.valePath,
-      plugin.normalizeConfigPath(settings.cli.configPath)
-    );
+  const configManager = useConfigManager(settings);
 
-  const [configManager, setConfigManager] = React.useState(
-    newConfigManager(settings)
-  );
+  const onSettingsChange = async (settings: ValeSettings) => {
+    // Write new changes to disk.
+    plugin.settings = settings;
+    await plugin.saveSettings();
 
-  const onChange = (settings: ValeSettings) => {
-    onSettingsChange(settings);
-    setConfigManager(newConfigManager(settings));
+    setSettings(settings);
   };
+
+  React.useEffect(() => {
+    if (settings.type === "cli") {
+      configManager.configPathExists().then((res) => setValidConfigPath(res));
+    } else {
+      setValidConfigPath(false);
+    }
+  }, [settings]);
 
   switch (page) {
     case "General":
@@ -41,29 +40,31 @@ export const SettingsRouter = ({
         <>
           <GeneralSettings
             settings={settings}
-            onSettingsChange={(s) => onChange(s)}
+            onSettingsChange={onSettingsChange}
           />
-          <StyleSettings
-            configManager={configManager}
-            navigate={(page, context) => {
-              setStyle(context);
-              setPage(page);
-            }}
-          />
+          {validConfigPath && (
+            <StyleSettings
+              settings={settings}
+              navigate={(page, context) => {
+                setStyle(context);
+                setPage(page);
+              }}
+            />
+          )}
         </>
       );
     case "Rules":
       return (
         <RuleSettings
+          settings={settings}
           style={style}
-          configManager={configManager}
           navigate={(page, context) => {
             setStyle(context);
             setPage(page);
           }}
         />
       );
+    default:
+      return <div></div>;
   }
-
-  return <div></div>;
 };

@@ -1,15 +1,9 @@
 import CodeMirror from "codemirror";
 import { EventBus } from "EventBus";
-import { mkdir } from "fs/promises";
 import { FileSystemAdapter, MarkdownView, Plugin } from "obsidian";
 import * as path from "path";
 import { ValeSettingTab } from "./settings/ValeSettingTab";
-import {
-  DEFAULT_SETTINGS,
-  DEFAULT_VALE_INI,
-  ValeAlert,
-  ValeSettings,
-} from "./types";
+import { DEFAULT_SETTINGS, ValeAlert, ValeSettings } from "./types";
 import { ValeConfigManager } from "./vale/ValeConfigManager";
 import { ValeRunner } from "./vale/ValeRunner";
 import { ValeView, VIEW_TYPE_VALE } from "./ValeView";
@@ -21,17 +15,18 @@ export default class ValePlugin extends Plugin {
   private configManager?: ValeConfigManager; // Manages operations that require disk access.
   private runner?: ValeRunner; // Runs the actual check.
 
-  private eventBus: EventBus = new EventBus();
-  private unregisterAlerts: () => void;
+  // We need to keep the association between marker and alert, in the the case
+  // where the user edits the text and the spans no longer match.
   private markers: Map<CodeMirror.TextMarker, ValeAlert> = new Map<
     CodeMirror.TextMarker,
     ValeAlert
   >();
 
+  private eventBus: EventBus = new EventBus();
+  private unregisterAlerts: () => void;
+
   // onload runs when plugin becomes enabled.
   async onload(): Promise<void> {
-    this.initializeDataPath();
-
     await this.loadSettings();
 
     this.addSettingTab(new ValeSettingTab(this.app, this));
@@ -129,37 +124,20 @@ export default class ValePlugin extends Plugin {
     this.initializeValeRunner();
   }
 
-  // initializeDataPath creates a directory inside the plugin directory for
-  // storing default Vale configuration.
-  async initializeDataPath(): Promise<void> {
-    const defaultConfigManager = new ValeConfigManager(
-      DEFAULT_SETTINGS.cli.valePath,
-      this.normalizeConfigPath(DEFAULT_SETTINGS.cli.configPath)
-    );
-
-    await mkdir(path.dirname(defaultConfigManager.getConfigPath()), {
-      recursive: true,
-    });
-
-    if (!(await defaultConfigManager.configPathExists())) {
-      await defaultConfigManager.saveConfig(DEFAULT_VALE_INI);
-    }
-
-    await mkdir(await defaultConfigManager.getStylesPath(), {
-      recursive: true,
-    });
-  }
-
   // initializeValeRunner rebuilds the config manager and runner. Should be run
   // whenever the settings change.
   initializeValeRunner(): void {
-    this.configManager =
-      this.settings.type === "cli"
-        ? new ValeConfigManager(
-            this.settings.cli.valePath,
-            this.normalizeConfigPath(this.settings.cli.configPath)
-          )
-        : undefined;
+    this.configManager = undefined;
+    if (this.settings.type === "cli") {
+      if (this.settings.cli.managed) {
+        this.configManager = this.newManagedConfigManager();
+      } else {
+        this.configManager = new ValeConfigManager(
+          this.settings.cli.valePath,
+          this.normalizeConfigPath(this.settings.cli.configPath)
+        );
+      }
+    }
 
     this.runner = new ValeRunner(this.settings, this.configManager);
 
@@ -167,6 +145,20 @@ export default class ValePlugin extends Plugin {
     this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE).forEach((leaf) => {
       leaf.detach();
     });
+  }
+
+  newManagedConfigManager(): ValeConfigManager {
+    const dataDir = path.join(
+      this.app.vault.configDir,
+      "plugins/obsidian-vale/data"
+    );
+
+    const binaryName = process.platform === "win32" ? "vale.exe" : "vale";
+
+    return new ValeConfigManager(
+      this.normalizeConfigPath(path.join(dataDir, "bin", binaryName)),
+      this.normalizeConfigPath(path.join(dataDir, ".vale.ini"))
+    );
   }
 
   // If config path is relative, then convert it to an absolute path.
@@ -242,6 +234,7 @@ export default class ValePlugin extends Plugin {
           .forEach((mark) => mark.clear());
 
         this.eventBus.dispatch("deselect-alert", {});
+
         return;
       }
 

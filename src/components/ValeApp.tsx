@@ -1,5 +1,6 @@
 import { MarkdownView } from "obsidian";
 import * as React from "react";
+import { Onboarding } from "settings/GeneralSettings";
 import { EventBus } from "../EventBus";
 import { useApp } from "../hooks";
 import { CheckInput, ValeAlert } from "../types";
@@ -7,6 +8,7 @@ import { ValeRunner } from "../vale/ValeRunner";
 import { AlertList } from "./AlertList";
 import { ErrorMessage } from "./ErrorMessage";
 import { Icon } from "./Icon";
+import { LoaderCube } from "./LoaderCube";
 
 interface Props {
   runner: ValeRunner;
@@ -26,6 +28,7 @@ export const ValeApp = ({
 }: Props): React.ReactElement => {
   const [loading, setLoading] = React.useState(false);
   const [highlightAlert, setHighlightAlert] = React.useState<ValeAlert>();
+  const [showOnboarding, setShowOnboarding] = React.useState(false);
 
   const [report, setReport] = React.useState<CheckReport>({
     results: [],
@@ -38,7 +41,7 @@ export const ValeApp = ({
   if (!view) {
     return (
       <div>
-        <h4>Nothing to check</h4>
+        <h4>Check your document with Vale</h4>
         <p>
           Run the <strong>Vale: Check document</strong> command to check your
           document.
@@ -54,6 +57,7 @@ export const ValeApp = ({
     const { text, format } = input;
 
     checked(() => {
+      setShowOnboarding(false);
       setLoading(true);
       setReport({
         results: [],
@@ -81,14 +85,27 @@ export const ValeApp = ({
                 ),
               })
             );
+          } else if (
+            err.message === "Couldn't find vale" ||
+            err.message === "Couldn't find config"
+          ) {
+            setShowOnboarding(true);
+          } else {
+            checked(() =>
+              setReport({
+                ...report,
+                errors: <ErrorMessage message={err.toString()} />,
+              })
+            );
           }
+        } else {
+          checked(() =>
+            setReport({
+              ...report,
+              errors: <ErrorMessage message={err.toString()} />,
+            })
+          );
         }
-        checked(() =>
-          setReport({
-            ...report,
-            errors: <ErrorMessage message={err.toString()} />,
-          })
-        );
       })
       .finally(() => {
         checked(() => {
@@ -97,6 +114,7 @@ export const ValeApp = ({
       });
   };
 
+  // Highlight the alert whenever the users selects a text marker.
   React.useEffect(() => {
     const unr = eventBus.on("select-alert", (alert: ValeAlert) => {
       setHighlightAlert(alert);
@@ -112,6 +130,7 @@ export const ValeApp = ({
     };
   }, [report]);
 
+  // Run the actual check.
   React.useEffect(() => {
     let cancel = false;
 
@@ -134,8 +153,7 @@ export const ValeApp = ({
   }, [view]);
 
   if (loading) {
-    // return <LoaderCube />;
-    return <div className="loader" />;
+    return <LoaderCube />;
   }
 
   if (report.errors) {
@@ -145,6 +163,10 @@ export const ValeApp = ({
         {report.errors}
       </>
     );
+  }
+
+  if (showOnboarding) {
+    return <Onboarding />;
   }
 
   if (report.results) {
@@ -168,4 +190,35 @@ export const ValeApp = ({
 const randomEncouragement = () => {
   const phrases = ["Nice! 👌", "You're awesome! 💪", "You did it! 🙌"];
   return phrases[Math.floor(Math.random() * phrases.length)];
+};
+
+const Onboarding = () => {
+  return (
+    <div className="card">
+      <h2 style={{ textAlign: "center" }}>Configure Vale</h2>
+      <p>
+        This plugin is a graphical interface for{" "}
+        <a href="https://docs.errata.ai/">Vale</a>.
+      </p>
+      <p>
+        To check your document, you first need to configure where to find Vale.
+      </p>
+      <ol>
+        <li>
+          {"Go to "}
+          <strong>Preferences</strong>
+          {" -> "}
+          <strong>Plugin options</strong>
+          {" -> "}
+          <strong>Vale</strong>
+          {" to configure Vale."}
+        </li>
+        <li>
+          {"Run the "}
+          <strong>Check document</strong>
+          {" command again when you're done."}
+        </li>
+      </ol>
+    </div>
+  );
 };

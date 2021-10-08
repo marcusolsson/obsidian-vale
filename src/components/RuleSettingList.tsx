@@ -13,8 +13,12 @@ export const RuleSettingList = ({
 }: Props): React.ReactElement => {
   return (
     <div>
-      {rules.map((rule) => (
-        <RuleSetting key={rule.name} value={rule} onChange={onChange} />
+      {rules.map((rule, idx) => (
+        <RuleSetting
+          key={`${rule.name}-${idx}`}
+          value={rule}
+          onChange={onChange}
+        />
       ))}
     </div>
   );

@@ -1,10 +1,11 @@
+import * as compressing from "compressing";
 import download from "download";
 import { createReadStream, createWriteStream, unlinkSync } from "fs";
-import { readdir, readFile, rm, stat, writeFile } from "fs/promises";
+import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
 import { parse, stringify } from "ini";
 import * as path from "path";
 import { Extract } from "unzipper";
-import { ValeConfig, ValeRule, ValeStyle } from "../types";
+import { DEFAULT_VALE_INI, ValeConfig, ValeRule, ValeStyle } from "../types";
 
 // ValeManager exposes file operations for working with the Vale configuration
 // file and styles.
@@ -75,7 +76,8 @@ export class ValeConfigManager {
     return parse(await readFile(this.configPath, "utf-8")) as ValeConfig;
   }
 
-  saveConfig(config: ValeConfig): Promise<void> {
+  async saveConfig(config: ValeConfig): Promise<void> {
+    await mkdir(path.dirname(this.configPath), { recursive: true });
     return writeFile(this.configPath, stringify(config), { encoding: "utf-8" });
   }
 
@@ -174,14 +176,48 @@ export class ValeConfigManager {
   async getEnabledStyles(): Promise<string[]> {
     const config = await this.loadConfig();
 
-    const basedOnStyles = config["*"].md.BasedOnStyles as string;
-
-    const styles = basedOnStyles
-      .split(",")
+    const styles = config["*"].md.BasedOnStyles.split(",")
       .map((style) => style.trim())
       .filter((style) => style);
 
     return [...new Set(styles)];
+  }
+
+  async installVale(): Promise<string> {
+    const url =
+      "https://github.com/errata-ai/vale/releases/download/v2.11.1/vale_2.11.1_macOS_64-bit.tar.gz";
+
+    const zipPath = path.join(
+      path.dirname(this.getConfigPath()),
+      path.basename(url)
+    );
+
+    const destinationPath = path.join(path.dirname(zipPath), "bin");
+
+    try {
+      const input = await download(url);
+      await compressing.tgz.uncompress(input, destinationPath);
+    } catch (e) {
+      console.error(e);
+    }
+
+    return path.join(destinationPath, "vale");
+  }
+
+  // initializeDataPath creates a directory inside the plugin directory for
+  // storing default Vale configuration.
+  async initializeDataPath(): Promise<void> {
+    await mkdir(path.dirname(this.getConfigPath()), {
+      recursive: true,
+    });
+
+    if (!(await this.configPathExists())) {
+      await this.saveConfig(DEFAULT_VALE_INI);
+    }
+
+    await mkdir(await this.getStylesPath(), {
+      recursive: true,
+    });
   }
 
   async getAvailableStyles(): Promise<ValeStyle[]> {

@@ -1,20 +1,22 @@
 import { Icon } from "components/Icon";
+import { useConfigManager } from "hooks";
 import React from "react";
-import { ValeRule } from "types";
-import { ValeConfigManager } from "vale/ValeConfigManager";
+import { ValeRule, ValeSettings } from "types";
 import { RuleSettingList } from "../components/RuleSettingList";
 
 interface Props {
+  settings: ValeSettings;
   style: string;
-  configManager: ValeConfigManager;
   navigate: (page: string, context: any) => void;
 }
 
 export const RuleSettings = ({
-  configManager,
+  settings,
   style,
   navigate,
 }: Props): React.ReactElement => {
+  const configManager = useConfigManager(settings);
+
   const [state, setState] = React.useState<ValeRule[]>([]);
 
   React.useEffect(() => {

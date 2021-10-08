@@ -1,32 +1,32 @@
+import { useConfigManager } from "hooks";
 import { Setting } from "obsidian";
 import React from "react";
-import { ValeStyle } from "../types";
-import { ValeConfigManager } from "../vale/ValeConfigManager";
+import { ValeSettings, ValeStyle } from "../types";
 
 interface Props {
-  configManager: ValeConfigManager;
+  settings: ValeSettings;
   navigate: (page: string, context: any) => void;
 }
 
 export const StyleSettings = ({
-  configManager,
+  settings,
   navigate,
 }: Props): React.ReactElement => {
   const [installedStyles, setInstalledStyles] = React.useState<ValeStyle[]>([]);
   const [enabledStyles, setEnabledStyles] = React.useState<string[]>([]);
-  const [error, setError] = React.useState(false);
-
   const ref = React.useRef<HTMLDivElement>();
+
+  const configManager = useConfigManager(settings);
 
   React.useEffect(() => {
     (async () => {
-      setError(false);
-
       try {
-        setInstalledStyles(await configManager.getAvailableStyles());
-        setEnabledStyles(await configManager.getEnabledStyles());
+        if (configManager && (await configManager.configPathExists())) {
+          setInstalledStyles(await configManager.getAvailableStyles());
+          setEnabledStyles(await configManager.getEnabledStyles());
+        }
       } catch (err) {
-        setError(true);
+        console.error(err);
         return;
       }
     })();
@@ -112,9 +112,5 @@ export const StyleSettings = ({
     });
   }
 
-  return error ? (
-    <small className="mod-warning">{"Couldn't find any styles."}</small>
-  ) : (
-    <div ref={ref} />
-  );
+  return <div ref={ref} />;
 };
