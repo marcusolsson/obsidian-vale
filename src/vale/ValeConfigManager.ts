@@ -1,7 +1,6 @@
 import * as compressing from "compressing";
 import download from "download";
-import { createReadStream, createWriteStream, unlinkSync } from "fs";
-import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
+import * as fs from "fs";
 import { parse, stringify } from "ini";
 import * as path from "path";
 import { Extract } from "unzipper";
@@ -27,13 +26,15 @@ export class ValeConfigManager {
   }
 
   async pathExists(): Promise<boolean> {
-    return stat(this.path)
+    return fs.promises
+      .stat(this.path)
       .then((stat) => stat.isFile())
       .catch(() => false);
   }
 
   async configPathExists(): Promise<boolean> {
-    return stat(this.configPath)
+    return fs.promises
+      .stat(this.configPath)
       .then((stat) => stat.isFile())
       .catch(() => false);
   }
@@ -43,7 +44,8 @@ export class ValeConfigManager {
 
     const zipPath = path.join(stylesPath, path.basename(style.url));
 
-    const isInstalled = await stat(path.join(stylesPath, style.name))
+    const isInstalled = await fs.promises
+      .stat(path.join(stylesPath, style.name))
       .then((stats) => stats.isDirectory())
       .catch(() => false);
 
@@ -53,11 +55,11 @@ export class ValeConfigManager {
 
     return new Promise((resolve) => {
       download(style.url, { extract: true }).pipe(
-        createWriteStream(zipPath).on("close", () => {
-          createReadStream(zipPath)
+        fs.createWriteStream(zipPath).on("close", () => {
+          fs.createReadStream(zipPath)
             .pipe(Extract({ path: path.dirname(zipPath) }))
             .on("close", () => {
-              unlinkSync(zipPath);
+              fs.unlinkSync(zipPath);
               resolve();
             });
         })
@@ -66,19 +68,23 @@ export class ValeConfigManager {
   }
 
   async uninstallStyle(style: ValeStyle): Promise<void> {
-    return rm(path.join(await this.getStylesPath(), style.name), {
+    return fs.promises.rm(path.join(await this.getStylesPath(), style.name), {
       force: true,
       recursive: true,
     });
   }
 
   async loadConfig(): Promise<ValeConfig> {
-    return parse(await readFile(this.configPath, "utf-8")) as ValeConfig;
+    return parse(
+      await fs.promises.readFile(this.configPath, "utf-8")
+    ) as ValeConfig;
   }
 
   async saveConfig(config: ValeConfig): Promise<void> {
-    await mkdir(path.dirname(this.configPath), { recursive: true });
-    return writeFile(this.configPath, stringify(config), { encoding: "utf-8" });
+    await fs.promises.mkdir(path.dirname(this.configPath), { recursive: true });
+    return fs.promises.writeFile(this.configPath, stringify(config), {
+      encoding: "utf-8",
+    });
   }
 
   async getStylesPath(): Promise<string | undefined> {
@@ -152,7 +158,9 @@ export class ValeConfigManager {
   }
 
   async getRulesForStyle(style: string): Promise<string[]> {
-    const paths = await readdir(path.join(await this.getStylesPath(), style));
+    const paths = await fs.promises.readdir(
+      path.join(await this.getStylesPath(), style)
+    );
 
     return paths
       .map((entry) => path.parse(entry))
@@ -161,12 +169,14 @@ export class ValeConfigManager {
   }
 
   async getInstalled(): Promise<string[]> {
-    const paths = await readdir(await this.getStylesPath());
+    const paths = await fs.promises.readdir(await this.getStylesPath());
 
     const installed = [...paths]
       .filter((style) => style)
       .filter(async (name) => {
-        const info = await stat(path.join(await this.getStylesPath(), name));
+        const info = await fs.promises.stat(
+          path.join(await this.getStylesPath(), name)
+        );
         return info.isDirectory();
       });
 
@@ -226,7 +236,7 @@ export class ValeConfigManager {
       await this.saveConfig(DEFAULT_VALE_INI);
     }
 
-    await mkdir(await this.getStylesPath(), {
+    await fs.promises.mkdir(await this.getStylesPath(), {
       recursive: true,
     });
   }
