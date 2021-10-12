@@ -1,6 +1,6 @@
 {
   "name": "obsidian-vale",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "A Vale client for Obsidian.",
   "main": "main.js",
   "scripts": {
