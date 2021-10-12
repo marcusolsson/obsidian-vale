@@ -1,8 +1,5 @@
-import { MarkdownView } from "obsidian";
 import * as React from "react";
-import { Onboarding } from "settings/GeneralSettings";
 import { EventBus } from "../EventBus";
-import { useApp } from "../hooks";
 import { CheckInput, ValeAlert } from "../types";
 import { ValeRunner } from "../vale/ValeRunner";
 import { AlertList } from "./AlertList";
@@ -30,25 +27,7 @@ export const ValeApp = ({
   const [highlightAlert, setHighlightAlert] = React.useState<ValeAlert>();
   const [showOnboarding, setShowOnboarding] = React.useState(false);
 
-  const [report, setReport] = React.useState<CheckReport>({
-    results: [],
-  });
-
-  const { workspace } = useApp();
-
-  const view = workspace.getActiveViewOfType(MarkdownView);
-
-  if (!view) {
-    return (
-      <div>
-        <h4>Check your document with Vale</h4>
-        <p>
-          Run the <strong>Vale: Check document</strong> command to check your
-          document.
-        </p>
-      </div>
-    );
-  }
+  const [report, setReport] = React.useState<CheckReport>();
 
   const check = async (
     input: CheckInput,
@@ -59,18 +38,15 @@ export const ValeApp = ({
     checked(() => {
       setShowOnboarding(false);
       setLoading(true);
-      setReport({
-        results: [],
-        errors: undefined,
-      });
+      setReport(undefined);
     });
 
     return runner
       .run(text, format)
       .then((response) => {
         checked(() => {
-          const results = Object.values(response)[0];
-          setReport({ ...report, results });
+          const results = Object.values(response)[0] ?? [];
+          setReport({ ...report, results: results });
           eventBus.dispatch("alerts", results);
         });
       })
@@ -150,10 +126,14 @@ export const ValeApp = ({
       unregister();
       cancel = true;
     };
-  }, [view]);
+  }, [eventBus]);
 
   if (loading) {
     return <LoaderCube />;
+  }
+
+  if (!report) {
+    return <div></div>;
   }
 
   if (report.errors) {
@@ -169,7 +149,7 @@ export const ValeApp = ({
     return <Onboarding />;
   }
 
-  if (report.results) {
+  if (report.results.length) {
     return (
       <AlertList
         alerts={report.results}

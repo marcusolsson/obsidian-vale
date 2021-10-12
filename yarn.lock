@@ -1802,10 +1802,10 @@ object.values@^1.1.4:
     define-properties "^1.1.3"
     es-abstract "^1.19.1"
 
-obsidian@^0.12.0:
-  version "0.12.17"
-  resolved "https://registry.yarnpkg.com/obsidian/-/obsidian-0.12.17.tgz#8efe75310d0e3988cdeccfbb176d3a8ff7b363c7"
-  integrity sha512-YvCAlRym9D8zNPXt6Ez8QubSTVGoChx6lb58zqI13Dcrz3l1lgUO+pcOGDiD5Qa67nzDZLXo3aV2rqkCCpTvGQ==
+obsidian@0.12.16:
+  version "0.12.16"
+  resolved "https://registry.yarnpkg.com/obsidian/-/obsidian-0.12.16.tgz#5745ad2892bcb26b562025f29fac2ca0dd9959c7"
+  integrity sha512-YwwhYrmlv71A/ntTiGOyGaqr9ONhKPE1OKN1tcHovLJC0N/BRZ7XlGpzaN1T3BnAE5H8DmYLsAI3h67u6eJPGQ==
   dependencies:
     "@types/codemirror" "0.0.108"
     moment "2.29.1"
