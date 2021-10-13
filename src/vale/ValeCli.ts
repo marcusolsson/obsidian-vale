@@ -10,7 +10,7 @@ export class ValeCli {
   }
 
   async vale(text: string, format: string): Promise<ValeResponse> {
-    const child = spawn(this.configManager.getPath(), [
+    const child = spawn(this.configManager.getValePath(), [
       "--config",
       this.configManager.getConfigPath(),
       "--ext",

@@ -24,7 +24,7 @@ export class ValeRunner {
           return new ValeServer(this.settings.server.url).vale(text, format);
         } else if (this.settings.type === "cli") {
           const [valeExists, configExists] = await Promise.all([
-            this.configManager.pathExists(),
+            this.configManager.valePathExists(),
             this.configManager.configPathExists(),
           ]);
 

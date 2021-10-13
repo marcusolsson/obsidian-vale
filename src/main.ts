@@ -15,7 +15,7 @@ export default class ValePlugin extends Plugin {
   private configManager?: ValeConfigManager; // Manages operations that require disk access.
   private runner?: ValeRunner; // Runs the actual check.
 
-  // We need to keep the association between marker and alert, in the the case
+  // We need to keep the association between marker and alert, in the case
   // where the user edits the text and the spans no longer match.
   private markers: Map<CodeMirror.TextMarker, ValeAlert> = new Map<
     CodeMirror.TextMarker,
@@ -72,10 +72,6 @@ export default class ValePlugin extends Plugin {
 
   // onunload runs when plugin becomes disabled.
   async onunload(): Promise<void> {
-    if (this.view) {
-      await this.view.onClose();
-    }
-
     // Remove all open Vale leaves.
     this.app.workspace
       .getLeavesOfType(VIEW_TYPE_VALE)
@@ -117,10 +113,7 @@ export default class ValePlugin extends Plugin {
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign(
-      Object.assign({}, DEFAULT_SETTINGS),
-      await this.loadData()
-    );
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
     this.initializeValeRunner();
   }
 
@@ -174,7 +167,7 @@ export default class ValePlugin extends Plugin {
       return adapter.getFullPath(configPath);
     }
 
-    throw new Error("Unrecognized config path");
+    throw new Error("Unsupported platform");
   }
 
   // onResult creates markers for every alert after each new check.

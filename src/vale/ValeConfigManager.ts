@@ -9,25 +9,25 @@ import { DEFAULT_VALE_INI, ValeConfig, ValeRule, ValeStyle } from "../types";
 // ValeManager exposes file operations for working with the Vale configuration
 // file and styles.
 export class ValeConfigManager {
-  private path: string;
+  private valePath: string;
   private configPath: string;
 
-  constructor(path: string, configPath: string) {
-    this.path = path;
+  constructor(valePath: string, configPath: string) {
+    this.valePath = valePath;
     this.configPath = configPath;
   }
 
-  getPath(): string {
-    return this.path;
+  getValePath(): string {
+    return this.valePath;
   }
 
   getConfigPath(): string {
     return this.configPath;
   }
 
-  async pathExists(): Promise<boolean> {
+  async valePathExists(): Promise<boolean> {
     return fs.promises
-      .stat(this.path)
+      .stat(this.valePath)
       .then((stat) => stat.isFile())
       .catch(() => false);
   }

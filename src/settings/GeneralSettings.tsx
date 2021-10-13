@@ -20,7 +20,7 @@ export const GeneralSettings = ({
   // Check whether the user have configured a path to a valid config file.
   React.useEffect(() => {
     if (settings.type === "cli") {
-      configManager.pathExists().then((exists) => setOnboarding(!exists));
+      configManager.valePathExists().then((exists) => setOnboarding(!exists));
     }
   }, [settings, configManager]);
 
