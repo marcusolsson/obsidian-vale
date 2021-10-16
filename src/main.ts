@@ -1,6 +1,11 @@
 import CodeMirror from "codemirror";
 import { EventBus } from "EventBus";
-import { FileSystemAdapter, MarkdownView, Plugin } from "obsidian";
+import {
+  FileSystemAdapter,
+  MarkdownView,
+  normalizePath,
+  Plugin,
+} from "obsidian";
 import * as path from "path";
 import { ValeSettingTab } from "./settings/ValeSettingTab";
 import { DEFAULT_SETTINGS, ValeAlert, ValeSettings } from "./types";
@@ -11,7 +16,6 @@ import { ValeView, VIEW_TYPE_VALE } from "./ValeView";
 export default class ValePlugin extends Plugin {
   public settings: ValeSettings;
 
-  private view: ValeView; // Displays the results.
   private configManager?: ValeConfigManager; // Manages operations that require disk access.
   private runner?: ValeRunner; // Runs the actual check.
 
@@ -56,13 +60,13 @@ export default class ValePlugin extends Plugin {
     this.registerView(
       VIEW_TYPE_VALE,
       (leaf) =>
-        (this.view = new ValeView(
+        new ValeView(
           leaf,
           this.settings,
           this.runner,
           this.eventBus,
           this.onAlertClick
-        ))
+        )
     );
 
     this.registerDomEvent(document, "pointerup", this.onMarkerClick);
@@ -73,9 +77,7 @@ export default class ValePlugin extends Plugin {
   // onunload runs when plugin becomes disabled.
   async onunload(): Promise<void> {
     // Remove all open Vale leaves.
-    this.app.workspace
-      .getLeavesOfType(VIEW_TYPE_VALE)
-      .forEach((leaf) => leaf.detach());
+    this.app.workspace.detachLeavesOfType(VIEW_TYPE_VALE);
 
     // Remove all marks from the previous check.
     this.app.workspace.iterateCodeMirrors((cm) => {
@@ -90,21 +92,23 @@ export default class ValePlugin extends Plugin {
   // activateView triggers a check and reveals the Vale view, if isn't already
   // visible.
   async activateView(): Promise<void> {
-    const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE);
-
-    if (leaves.length === 0) {
+    // Create the Vale view if it's not already created.
+    if (this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE).length === 0) {
       await this.app.workspace.getRightLeaf(false).setViewState({
         type: VIEW_TYPE_VALE,
         active: true,
       });
     }
 
-    // Request the view to run the actual check.
-    this.view.runValeCheck();
+    // There should only be one Vale view open.
+    this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE).forEach((leaf) => {
+      this.app.workspace.revealLeaf(leaf);
 
-    this.app.workspace.revealLeaf(
-      this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE)[0]
-    );
+      if (leaf.view instanceof ValeView) {
+        console.log("vale view");
+        leaf.view.runValeCheck();
+      }
+    });
   }
 
   async saveSettings(): Promise<void> {
@@ -164,7 +168,7 @@ export default class ValePlugin extends Plugin {
     const { adapter } = this.app.vault;
 
     if (adapter instanceof FileSystemAdapter) {
-      return adapter.getFullPath(configPath);
+      return adapter.getFullPath(normalizePath(configPath));
     }
 
     throw new Error("Unsupported platform");
@@ -216,6 +220,11 @@ export default class ValePlugin extends Plugin {
   // onMarkerClick determines whether the user clicks on an existing marker in
   // the editor and highlights the corresponding alert in the results view.
   onMarkerClick(e: PointerEvent): void {
+    // Ignore if there's no Vale view open.
+    if (this.app.workspace.getLeavesOfType(VIEW_TYPE_VALE).length === 0) {
+      return;
+    }
+
     this.withCodeMirrorEditor((editor) => {
       if (
         e.target instanceof HTMLElement &&

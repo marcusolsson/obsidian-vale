@@ -1,4 +1,4 @@
-import { App, FileSystemAdapter, Vault } from "obsidian";
+import { App, FileSystemAdapter, normalizePath, Vault } from "obsidian";
 import path from "path";
 import * as React from "react";
 import { ValeConfigManager } from "vale/ValeConfigManager";
@@ -28,13 +28,13 @@ export const useConfigManager = (
     }
 
     return new ValeConfigManager(
-      normalizePath(settings.cli.valePath, app.vault),
-      normalizePath(settings.cli.configPath, app.vault)
+      ensureAbsolutePath(settings.cli.valePath, app.vault),
+      ensureAbsolutePath(settings.cli.configPath, app.vault)
     );
   }, [settings]);
 };
 
-const normalizePath = (resourcePath: string, vault: Vault): string => {
+const ensureAbsolutePath = (resourcePath: string, vault: Vault): string => {
   if (path.isAbsolute(resourcePath)) {
     return resourcePath;
   }
@@ -42,7 +42,7 @@ const normalizePath = (resourcePath: string, vault: Vault): string => {
   const { adapter } = vault;
 
   if (adapter instanceof FileSystemAdapter) {
-    return adapter.getFullPath(resourcePath);
+    return adapter.getFullPath(normalizePath(resourcePath));
   }
 
   throw new Error("Unrecognized resource path");
@@ -54,7 +54,7 @@ const newManagedConfigManager = (vault: Vault): ValeConfigManager => {
   const binaryName = process.platform === "win32" ? "vale.exe" : "vale";
 
   return new ValeConfigManager(
-    normalizePath(path.join(dataDir, "bin", binaryName), vault),
-    normalizePath(path.join(dataDir, ".vale.ini"), vault)
+    ensureAbsolutePath(path.join(dataDir, "bin", binaryName), vault),
+    ensureAbsolutePath(path.join(dataDir, ".vale.ini"), vault)
   );
 };
