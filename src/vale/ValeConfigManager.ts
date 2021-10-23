@@ -218,7 +218,11 @@ export class ValeConfigManager {
 
     try {
       const input = await download(url);
-      await compressing.tgz.uncompress(input, destinationPath);
+      if (process.platform === "win32") {
+        await compressing.zip.uncompress(input, destinationPath);
+      } else {
+        await compressing.tgz.uncompress(input, destinationPath);
+      }
     } catch (e) {
       console.error(e);
     }
