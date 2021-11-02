@@ -5,4 +5,7 @@
 
 A [Vale](https://docs.errata.ai/) client for Obsidian.
 
+To see the plugin in action, check out [Getting started with Obsidian Vale](https://vimeo.com/641460560).
+
 ![Screenshot](screenshot.png)
+
