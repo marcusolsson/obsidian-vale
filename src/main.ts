@@ -18,6 +18,9 @@ export default class ValePlugin extends Plugin {
 
   private configManager?: ValeConfigManager; // Manages operations that require disk access.
   private runner?: ValeRunner; // Runs the actual check.
+  private showAlerts = true;
+
+  private alerts: ValeAlert[] = [];
 
   // We need to keep the association between marker and alert, in the case
   // where the user edits the text and the spans no longer match.
@@ -40,18 +43,26 @@ export default class ValePlugin extends Plugin {
     this.addCommand({
       id: "vale-check-document",
       name: "Check document",
-      checkCallback: (checking) => {
-        if (checking) {
-          return !!this.app.workspace.getActiveViewOfType(MarkdownView);
-        }
-
+      editorCallback: () => {
         // The Check document command doesn't actually perform the check. Since
         // a check may take some time to complete, the command only activates
         // the view and then asks the view to run the check. This lets us
         // display a progress bar while the check runs.
         this.activateView();
+      },
+    });
 
-        return true;
+    this.addCommand({
+      id: "vale-toggle-alerts",
+      name: "Toggle alerts",
+      editorCallback: () => {
+        this.showAlerts = !this.showAlerts;
+
+        this.clearAlertHighlights();
+
+        if (this.showAlerts) {
+          this.highlightAlerts();
+        }
       },
     });
 
@@ -178,11 +189,21 @@ export default class ValePlugin extends Plugin {
 
   // onResult creates markers for every alert after each new check.
   onResult(alerts: ValeAlert[]): void {
-    this.withCodeMirrorEditor((editor) => {
-      // Clear marks from previous check.
-      editor.getAllMarks().forEach((mark) => mark.clear());
+    this.alerts = alerts;
 
-      alerts.forEach((alert: ValeAlert) => {
+    this.clearAlertHighlights();
+    this.highlightAlerts();
+  }
+
+  clearAlertHighlights = (): void => {
+    this.withCodeMirrorEditor((editor) => {
+      editor.getAllMarks().forEach((mark) => mark.clear());
+    });
+  };
+
+  highlightAlerts = (): void => {
+    this.withCodeMirrorEditor((editor) => {
+      this.alerts.forEach((alert: ValeAlert) => {
         const marker = editor.markText(
           { line: alert.Line - 1, ch: alert.Span[0] - 1 },
           { line: alert.Line - 1, ch: alert.Span[1] },
@@ -195,7 +216,7 @@ export default class ValePlugin extends Plugin {
         this.markers.set(marker, alert);
       });
     });
-  }
+  };
 
   // onAlertClick highlights an alert in the editor when the user clicks one of
   // the cards in the results view.
