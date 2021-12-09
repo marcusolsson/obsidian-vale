@@ -197,11 +197,11 @@ export class ValeConfigManager {
     const releaseUrl = (platform: string) => {
       switch (platform) {
         case "linux":
-          return "https://github.com/errata-ai/vale/releases/download/v2.11.1/vale_2.11.1_Linux_64-bit.tar.gz";
+          return "https://github.com/errata-ai/vale/releases/download/v2.13.0/vale_2.13.0_Linux_64-bit.tar.gz";
         case "darwin":
-          return "https://github.com/errata-ai/vale/releases/download/v2.11.1/vale_2.11.1_macOS_64-bit.tar.gz";
+          return "https://github.com/errata-ai/vale/releases/download/v2.13.0/vale_2.13.0_macOS_64-bit.tar.gz";
         case "win32":
-          return "https://github.com/errata-ai/vale/releases/download/v2.11.1/vale_2.11.1_Windows_64-bit.zip";
+          return "https://github.com/errata-ai/vale/releases/download/v2.13.0/vale_2.13.0_Windows_64-bit.zip";
         default:
           throw new Error("Unsupported platform");
       }
