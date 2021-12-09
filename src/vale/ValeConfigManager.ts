@@ -292,6 +292,13 @@ export class ValeConfigManager {
         url: "https://github.com/errata-ai/alex/releases/latest/download/alex.zip",
       },
       {
+        name: "Readability",
+        description:
+          "Vale-compatible implementations of many popular readability metrics.",
+        homepage: "https://github.com/errata-ai/Readability",
+        url: "https://github.com/errata-ai/Readability/releases/latest/download/Readability.zip",
+      },
+      {
         name: "Openly",
         description:
           "A Vale linter style that attempts to emulate some features of the commercial, and closed source.",
