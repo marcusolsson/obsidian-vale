@@ -27,7 +27,9 @@ export default class ValePlugin extends Plugin {
   >();
 
   private eventBus: EventBus = new EventBus();
-  private unregisterAlerts: () => void;
+  private unregisterAlerts: () => void = () => {
+    return;
+  };
 
   // onload runs when plugin becomes enabled.
   async onload(): Promise<void> {
@@ -82,7 +84,7 @@ export default class ValePlugin extends Plugin {
     // Remove all marks from the previous check.
     this.app.workspace.iterateCodeMirrors((cm) => {
       cm.getAllMarks()
-        .filter((mark) => mark.className.contains("vale-underline"))
+        .filter((mark) => !!mark.className?.contains("vale-underline"))
         .forEach((mark) => mark.clear());
     });
 
@@ -130,8 +132,8 @@ export default class ValePlugin extends Plugin {
         this.configManager = this.newManagedConfigManager();
       } else {
         this.configManager = new ValeConfigManager(
-          this.settings.cli.valePath,
-          this.normalizeConfigPath(this.settings.cli.configPath)
+          this.settings.cli.valePath!,
+          this.normalizeConfigPath(this.settings.cli.configPath!)
         );
       }
     }
@@ -232,7 +234,9 @@ export default class ValePlugin extends Plugin {
       ) {
         editor
           .getAllMarks()
-          .filter((mark) => mark.className.contains("vale-underline-highlight"))
+          .filter(
+            (mark) => !!mark.className?.contains("vale-underline-highlight")
+          )
           .forEach((mark) => mark.clear());
 
         this.eventBus.dispatch("deselect-alert", {});
@@ -269,7 +273,9 @@ export default class ValePlugin extends Plugin {
     this.withCodeMirrorEditor((editor) => {
       editor
         .getAllMarks()
-        .filter((mark) => mark.className.contains("vale-underline-highlight"))
+        .filter(
+          (mark) => !!mark.className?.contains("vale-underline-highlight")
+        )
         .forEach((mark) => mark.clear());
 
       editor.markText(range.from, range.to, {
@@ -281,7 +287,7 @@ export default class ValePlugin extends Plugin {
   // withCodeMirrorEditor is a convenience function for making sure that a
   // function runs with a valid view and editor.
   withCodeMirrorEditor(
-    callback: (editor: CodeMirror.Editor, view?: MarkdownView) => void
+    callback: (editor: CodeMirror.Editor, view: MarkdownView) => void
   ): void {
     const view = this.app.workspace.getActiveViewOfType(MarkdownView);
     if (!view) {
