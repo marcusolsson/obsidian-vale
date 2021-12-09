@@ -291,6 +291,13 @@ export class ValeConfigManager {
         homepage: "https://github.com/errata-ai/alex",
         url: "https://github.com/errata-ai/alex/releases/latest/download/alex.zip",
       },
+      {
+        name: "Openly",
+        description:
+          "A Vale linter style that attempts to emulate some features of the commercial, and closed source.",
+        homepage: "https://github.com/testthedocs/Openly",
+        url: "https://github.com/testthedocs/Openly/releases/latest/download/Openly.zip",
+      },
     ]);
   }
 }
