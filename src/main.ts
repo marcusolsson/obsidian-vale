@@ -58,10 +58,10 @@ export default class ValePlugin extends Plugin {
       editorCallback: () => {
         this.showAlerts = !this.showAlerts;
 
-        this.clearAlertHighlights();
+        this.clearAlertMarkers();
 
         if (this.showAlerts) {
-          this.highlightAlerts();
+          this.markAlerts();
         }
       },
     });
@@ -191,17 +191,17 @@ export default class ValePlugin extends Plugin {
   onResult(alerts: ValeAlert[]): void {
     this.alerts = alerts;
 
-    this.clearAlertHighlights();
-    this.highlightAlerts();
+    this.clearAlertMarkers();
+    this.markAlerts();
   }
 
-  clearAlertHighlights = (): void => {
+  clearAlertMarkers = (): void => {
     this.withCodeMirrorEditor((editor) => {
       editor.getAllMarks().forEach((mark) => mark.clear());
     });
   };
 
-  highlightAlerts = (): void => {
+  markAlerts = (): void => {
     this.withCodeMirrorEditor((editor) => {
       this.alerts.forEach((alert: ValeAlert) => {
         const marker = editor.markText(
