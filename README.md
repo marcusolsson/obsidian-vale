@@ -9,3 +9,12 @@ To see the plugin in action, check out [Getting started with Obsidian Vale](http
 
 ![Screenshot](screenshot.png)
 
+## Troubleshooting
+
+Obsidian Vale doesn't yet support the new editor that was introduced in Obsidian 13.
+
+To continue using the plugin for version 13, you can enable the Legacy Editor.
+
+1. Open **Settings** -> **Editor**.
+2. Enable **Legacy Editor**.
+3. Restart Obsidian.
