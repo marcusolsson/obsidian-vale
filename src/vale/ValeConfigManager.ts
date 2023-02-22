@@ -279,6 +279,13 @@ export class ValeConfigManager {
         url: "https://github.com/errata-ai/proselint/releases/latest/download/proselint.zip",
       },
       {
+        name: "RedHat",
+        description:
+          "A Vale-compatible implementation of the Red Hat supplementary style guide for product documentation.",
+        homepage: "https://redhat-documentation.github.io/vale-at-red-hat/docs/main/user-guide/redhat-style-for-vale/",
+        url: "https://github.com/redhat-documentation/vale-at-red-hat/releases/latest/download/RedHat.zip",
+      },
+      {
         name: "write-good",
         description:
           "Naive linter for English prose for developers who can't write good and wanna learn to do other stuff good too.",
